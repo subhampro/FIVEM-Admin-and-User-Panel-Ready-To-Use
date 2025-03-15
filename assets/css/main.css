@@ -6,7 +6,7 @@
     --dark-hover: #3d3d3d;
     --dark-border: #4d4d4d;
     --dark-text: #ffffff;
-    --dark-text-secondary: #cccccc;
+    --dark-text-secondary: #e0e0e0;
     --accent-color: #4f46e5;
     --accent-hover: #4338ca;
     --success-color: #10b981;
@@ -21,16 +21,49 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    background-color: var(--dark-bg);
-    color: var(--dark-text);
+    background-color: var(--dark-bg) !important;
+    color: var(--dark-text) !important;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
 /* All text elements should have good color contrast */
-p, h1, h2, h3, h4, h5, h6, span, div, a, button, input, select, textarea, label, li {
-    color: var(--dark-text);
+p, h1, h2, h3, h4, h5, h6, span, div, a:not(.btn), button, input, select, textarea, label, li, td, th {
+    color: var(--dark-text) !important;
+}
+
+/* Add stronger text shadows to make text pop */
+h1, h2, h3, .card-header, .section-header {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+strong, b, .fw-bold, .font-weight-bold {
+    color: var(--dark-text) !important;
+    font-weight: 700 !important;
+}
+
+/* Enhanced section title styling */
+.section-header {
+    background-color: var(--dark-card-bg) !important;
+    background-image: linear-gradient(to right, rgba(79, 70, 229, 0.3), transparent) !important;
+    border-left: 4px solid var(--accent-color) !important;
+    padding-left: 1.25rem !important;
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    color: #ffffff !important;
+}
+
+/* Make badge text readable */
+.badge {
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Make card body text readable */
+.card-body {
+    color: var(--dark-text) !important;
 }
 
 a {
@@ -103,10 +136,6 @@ a:hover {
     color: var(--dark-text) !important;
     letter-spacing: 0.5px;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.card-body {
-    padding: 1.25rem;
 }
 
 .card-footer {
@@ -373,13 +402,6 @@ footer {
 }
 
 /* Special styling for section headers mentioned by user */
-.section-header {
-    background-image: linear-gradient(to right, rgba(79, 70, 229, 0.2), transparent) !important;
-    border-left: 4px solid var(--accent-color) !important;
-    padding-left: 1rem !important;
-}
-
-/* These are additional styles targeting common sections */
 .card-header-character,
 .card-header-financial, 
 .card-header-vehicles,

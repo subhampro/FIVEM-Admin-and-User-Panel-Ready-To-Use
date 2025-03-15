@@ -177,6 +177,46 @@ $baseUrl = getBaseUrl();
             border-color: var(--dark-border) !important;
         }
         
+        /* Improve readability of section titles */
+        .card-header {
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            letter-spacing: 0.5px !important;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+        }
+        
+        .section-header {
+            background-color: var(--dark-card-bg) !important;
+            background-image: linear-gradient(to right, rgba(79, 70, 229, 0.3), transparent) !important;
+            border-left: 4px solid var(--accent-color) !important;
+            padding-left: 1.25rem !important;
+            font-size: 1.2rem !important;
+        }
+        
+        /* Make sure text is readable in cards */
+        .card-body strong, 
+        .card-body b, 
+        .card-body .font-weight-bold,
+        .card-body .fw-bold,
+        .card-body label,
+        .card-body p,
+        .card-body h1, 
+        .card-body h2, 
+        .card-body h3, 
+        .card-body h4, 
+        .card-body h5, 
+        .card-body h6,
+        .card-body span:not(.badge),
+        .card-body div {
+            color: #ffffff !important;
+        }
+        
+        /* Ensure money cards and metadata items are readable */
+        .money-label, .money-value, .metadata-label {
+            color: #ffffff !important;
+            font-weight: 600 !important;
+        }
+        
         /* Alert styling */
         .alert {
             border: none !important;
