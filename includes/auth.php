@@ -119,55 +119,104 @@ function loginUser($username, $password, $remember = false) {
     if (empty($username) || empty($password)) {
         return [
             'status' => 'error',
-            'message' => 'Please enter both username and password.'
+            'message' => 'Username and password are required.'
         ];
     }
     
-    // Initialize User class
+    // Sanitize input
+    $username = sanitize($username);
+    
+    // Get user by username
     $user = new User();
+    $userData = $user->getUserByUsername($username);
     
-    // Attempt login
-    $userData = $user->login($username, $password);
-    
-    if ($userData) {
-        // Set session variables
-        $_SESSION['user_id'] = $userData['id'];
-        $_SESSION['username'] = $userData['username'];
-        $_SESSION['role'] = $userData['role'];
-        $_SESSION['last_active'] = time();
-        
-        // Set is_admin flag based on role
-        $_SESSION['is_admin'] = ($userData['role'] !== 'user') ? 1 : 0;
-        
-        // Set remember me cookie if requested
-        if ($remember) {
-            $token = generateRandomString(32);
-            $expiry = time() + (30 * 24 * 60 * 60); // 30 days
-            
-            // Store token in database (you might want to implement this)
-            // $user->storeRememberToken($userData['id'], $token, $expiry);
-            
-            // Set cookie
-            setcookie('remember_token', $token, $expiry, '/', '', false, true);
-        }
-        
-        // Log successful login
-        logToFile("User {$username} logged in successfully", 'auth');
-        
+    if (!$userData) {
         return [
-            'status' => 'success',
-            'message' => 'Login successful. Redirecting...',
-            'user' => $userData
+            'status' => 'error',
+            'message' => 'Invalid username or password.'
         ];
-    } else {
+    }
+    
+    // Check if user is active
+    if (!isset($userData['is_active']) || $userData['is_active'] != 1) {
+        return [
+            'status' => 'error',
+            'message' => 'Your account has been disabled. Please contact an administrator.'
+        ];
+    }
+    
+    // Verify password
+    if (!password_verify($password, $userData['password'])) {
         // Log failed login attempt
-        logToFile("Failed login attempt for username: {$username}", 'auth');
+        $logger = new Logger();
+        $logger->logAction($userData['id'], 'failed_login', 'Failed login attempt for username: ' . $username);
         
         return [
             'status' => 'error',
             'message' => 'Invalid username or password.'
         ];
     }
+    
+    // Check if password needs rehash
+    if (password_needs_rehash($userData['password'], PASSWORD_DEFAULT)) {
+        $user->updatePassword($userData['id'], $password);
+    }
+    
+    // Set session variables
+    $_SESSION['user_id'] = $userData['id'];
+    $_SESSION['username'] = $userData['username'];
+    $_SESSION['email'] = $userData['email'];
+    $_SESSION['last_active'] = time();
+    
+    // Set admin status in session
+    if (isset($userData['role']) && $userData['role'] != 'user') {
+        $_SESSION['is_admin'] = 1;
+    } else if (isset($userData['is_admin']) && $userData['is_admin'] == 1) {
+        $_SESSION['is_admin'] = 1;
+    } else {
+        $_SESSION['is_admin'] = 0;
+    }
+    
+    // Get player data if linked
+    if (isset($userData['player_id']) && !empty($userData['player_id'])) {
+        $player = new Player();
+        $playerData = $player->getPlayerById($userData['player_id']);
+        if ($playerData && isset($playerData['citizenid'])) {
+            $_SESSION['player_id'] = $userData['player_id'];
+            $_SESSION['citizenid'] = $playerData['citizenid'];
+        }
+    }
+    
+    // Handle remember me
+    if ($remember) {
+        $token = generateRandomString(64);
+        $expires = date('Y-m-d H:i:s', strtotime('+30 days'));
+        
+        // Store token in database
+        $db = new Database();
+        $db->insert('remember_tokens', [
+            'user_id' => $userData['id'],
+            'token' => $token,
+            'expires_at' => $expires,
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+        
+        // Set cookie
+        setcookie('remember_token', $token, strtotime('+30 days'), '/', '', false, true);
+    }
+    
+    // Update last login time
+    $user->updateLastLogin($userData['id']);
+    
+    // Log successful login
+    $logger = new Logger();
+    $logger->logAction($userData['id'], 'login', 'User logged in successfully');
+    
+    return [
+        'status' => 'success',
+        'message' => 'Login successful. Redirecting...',
+        'user_id' => $userData['id']
+    ];
 }
 
 /**

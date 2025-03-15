@@ -1,12 +1,8 @@
 <?php
 require_once '../config/init.php';
 
-// Check if user is logged in and is an admin
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
-    // Redirect to login page
-    header('Location: ../login.php');
-    exit;
-}
+// Require admin privileges
+requireAdmin('admin_level1');
 
 $admin = new Admin();
 $pendingChanges = new PendingChanges();
@@ -19,26 +15,26 @@ if (isset($_GET['action'])) {
     
     if ($action === 'approve' && $id > 0) {
         // Approve the change
-        $result = $pendingChanges->approveChange($id);
+        $result = $pendingChanges->approvePendingChange($id, $_SESSION['user_id']);
         if ($result) {
-            $logger->log('Admin approved a pending change (ID: ' . $id . ')', 'admin_action', $_SESSION['user_id']);
-            $_SESSION['success_message'] = 'Change approved successfully.';
+            $logger->logAction($_SESSION['user_id'], 'approve_change', 'Approved pending change (ID: ' . $id . ')');
+            setFlashMessage('success', 'Change approved successfully.');
         } else {
-            $_SESSION['error_message'] = 'Failed to approve change.';
+            setFlashMessage('danger', 'Failed to approve change.');
         }
-        header('Location: pending_changes.php');
+        redirect('pending_changes.php');
         exit;
     } elseif ($action === 'reject' && $id > 0) {
         // Reject the change
         $reason = isset($_GET['reason']) ? $_GET['reason'] : '';
-        $result = $pendingChanges->rejectChange($id, $reason);
+        $result = $pendingChanges->rejectPendingChange($id, $_SESSION['user_id'], $reason);
         if ($result) {
-            $logger->log('Admin rejected a pending change (ID: ' . $id . ')', 'admin_action', $_SESSION['user_id']);
-            $_SESSION['success_message'] = 'Change rejected successfully.';
+            $logger->logAction($_SESSION['user_id'], 'reject_change', 'Rejected pending change (ID: ' . $id . ')');
+            setFlashMessage('success', 'Change rejected successfully.');
         } else {
-            $_SESSION['error_message'] = 'Failed to reject change.';
+            setFlashMessage('danger', 'Failed to reject change.');
         }
-        header('Location: pending_changes.php');
+        redirect('pending_changes.php');
         exit;
     }
 }

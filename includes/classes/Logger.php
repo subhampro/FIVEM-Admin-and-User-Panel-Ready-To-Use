@@ -15,27 +15,28 @@ class Logger {
     }
     
     /**
-     * Log an admin action
+     * Log an action performed by a user
      * 
-     * @param int $adminId Admin ID
+     * @param int $userId User ID who performed the action
      * @param string $actionType Type of action
-     * @param string $actionDetails Details of the action
-     * @param string $targetTable Target table (optional)
-     * @param int $targetId Target ID (optional)
+     * @param string $actionDescription Description of action
      * @return int|false ID of the log entry or false on failure
      */
-    public function logAction($adminId, $actionType, $actionDetails, $targetTable = null, $targetId = null) {
+    public function logAction($userId, $actionType, $actionDescription) {
+        // Get IP address
+        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        
+        // Prepare data for insertion
         $data = [
-            'admin_id' => $adminId,
+            'user_id' => $userId,
             'action_type' => $actionType,
-            'action_details' => $actionDetails,
-            'target_table' => $targetTable,
-            'target_id' => $targetId,
-            'performed_at' => date('Y-m-d H:i:s'),
-            'ip_address' => $this->getClientIp()
+            'action' => $actionDescription,
+            'ip_address' => $ipAddress,
+            'timestamp' => date('Y-m-d H:i:s')
         ];
         
-        return $this->db->insert('admin_actions_log', $data);
+        // Insert into database
+        return $this->db->insert('action_logs', $data);
     }
     
     /**

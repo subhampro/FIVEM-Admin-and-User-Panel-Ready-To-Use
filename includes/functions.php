@@ -232,6 +232,20 @@ function isAdmin($level = 'admin_level1') {
         return false;
     }
     
+    // Check if user ID exists in session
+    if (!isset($_SESSION['user_id'])) {
+        return false;
+    }
+    
+    // If is_admin flag exists in session, use it for quick check
+    if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] == 1) {
+        // For higher levels, still need to check the database
+        if ($level === 'admin_level1') {
+            return true;
+        }
+    }
+    
+    // Query the database for specific admin level
     $user = new User();
     return $user->hasAdminLevel($_SESSION['user_id'], $level);
 }

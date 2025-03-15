@@ -23,6 +23,44 @@ $pageTitle = 'Admin Dashboard - ' . getSetting('site_name', 'FiveM Server Dashbo
 // Include configuration 
 require_once '../config/config.php';
 
+// Create pending_changes table if it doesn't exist
+function ensurePendingChangesTable() {
+    $db = new Database();
+    $query = "SHOW TABLES LIKE 'pending_changes'";
+    $result = $db->query($query);
+    
+    if (!$result || $result->rowCount() === 0) {
+        // Table doesn't exist, create it
+        $createTableQuery = "
+        CREATE TABLE IF NOT EXISTS `pending_changes` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `admin_id` int(11) NOT NULL,
+          `target_table` varchar(50) NOT NULL,
+          `target_id` varchar(50) NOT NULL,
+          `field_name` varchar(50) NOT NULL,
+          `old_value` text DEFAULT NULL,
+          `new_value` text DEFAULT NULL,
+          `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+          `reviewer_id` int(11) DEFAULT NULL,
+          `created_at` datetime NOT NULL,
+          `reviewed_at` datetime DEFAULT NULL,
+          `review_comments` text DEFAULT NULL,
+          PRIMARY KEY (`id`),
+          KEY `admin_id` (`admin_id`),
+          KEY `reviewer_id` (`reviewer_id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        ";
+        
+        $db->query($createTableQuery);
+        return true;
+    }
+    
+    return false;
+}
+
+// Ensure the pending_changes table exists
+ensurePendingChangesTable();
+
 // Include header
 include_once '../includes/header.php';
 ?>
