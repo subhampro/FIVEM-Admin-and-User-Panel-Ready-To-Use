@@ -1,0 +1,53 @@
+FiveM Server Admin Dashboard
+│
+├── config/
+│   ├── config.php                 # Database & application configuration
+│   └── init.php                   # Init file, includes config & connects to DB
+│
+├── assets/
+│   ├── css/                       # CSS files
+│   │   ├── bootstrap.min.css      # Bootstrap framework
+│   │   ├── admin.css              # Admin panel styles
+│   │   └── main.css               # Main website styles
+│   ├── js/
+│   │   ├── jquery.min.js          # jQuery library
+│   │   ├── bootstrap.min.js       # Bootstrap JS
+│   │   ├── admin.js               # Admin panel scripts
+│   │   └── main.js                # Main website scripts
+│   └── img/                       # Images directory
+│
+├── includes/
+│   ├── classes/
+│   │   ├── Database.php           # Database connection class
+│   │   ├── User.php               # User management class
+│   │   ├── Admin.php              # Admin functionality class
+│   │   ├── Player.php             # Game player data class
+│   │   ├── PendingChanges.php     # Pending changes management
+│   │   └── Logger.php             # Activity logging class
+│   ├── functions.php              # Common functions
+│   ├── auth.php                   # Authentication functions
+│   └── header.php, footer.php     # Common page elements
+│
+├── admin/
+│   ├── index.php                  # Admin dashboard home
+│   ├── users.php                  # User management
+│   ├── players.php                # Player data management
+│   ├── pending_changes.php        # Pending changes review
+│   ├── settings.php               # Website settings
+│   └── logs.php                   # Activity logs
+│
+├── user/
+│   ├── index.php                  # User dashboard
+│   ├── profile.php                # User profile management
+│   └── player_info.php            # View their player data
+│
+├── api/
+│   ├── index.php                  # API endpoint controller
+│   ├── players.php                # Player data API
+│   └── users.php                  # User data API
+│
+├── index.php                      # Main website landing page
+├── login.php                      # Login page
+├── register.php                   # Registration page
+├── logout.php                     # Logout functionality
+└── README.md                      # Project documentation 

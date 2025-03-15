@@ -1,0 +1,403 @@
+/* Main website styles - Responsive Dark Mode Theme */
+:root {
+    --dark-bg: #121212;
+    --dark-card-bg: #1e1e1e;
+    --dark-input-bg: #2d2d2d;
+    --dark-hover: #3d3d3d;
+    --dark-border: #4d4d4d;
+    --dark-text: #ffffff;
+    --dark-text-secondary: #cccccc;
+    --accent-color: #4f46e5;
+    --accent-hover: #4338ca;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --info-color: #3b82f6;
+}
+
+/* Base styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* All text elements should have good color contrast */
+p, h1, h2, h3, h4, h5, h6, span, div, a, button, input, select, textarea, label, li {
+    color: var(--dark-text);
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+.text-muted, .text-secondary {
+    color: var(--dark-text-secondary) !important;
+}
+
+.container {
+    width: 90%;
+    max-width: 1400px;
+    margin: auto;
+    padding: 0 15px;
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--dark-card-bg);
+    color: var(--dark-text);
+    padding: 0.75rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.navbar .navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.navbar .nav-link {
+    color: var(--dark-text-secondary);
+    padding: 0.5rem 1rem;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    color: var(--dark-text);
+}
+
+/* Cards */
+.card {
+    background-color: var(--dark-card-bg);
+    margin-bottom: 1.5rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--dark-border);
+    padding: 1rem 1.25rem;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    color: var(--dark-text) !important;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.card-footer {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-top: 1px solid var(--dark-border);
+    padding: 0.75rem 1.25rem;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: none;
+}
+
+.btn i {
+    margin-right: 0.5rem;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+    color: white;
+}
+
+.btn-secondary {
+    background-color: var(--dark-hover);
+    color: var(--dark-text);
+}
+
+.btn-secondary:hover {
+    background-color: #4d4d4d;
+    color: var(--dark-text);
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.btn-warning {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Tables */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: var(--dark-text);
+    border-collapse: collapse;
+}
+
+.table th, 
+.table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--dark-border);
+}
+
+.table thead th {
+    border-bottom: 2px solid var(--dark-border);
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: var(--dark-input-bg);
+    border: 1px solid var(--dark-border);
+    border-radius: 0.375rem;
+    color: var(--dark-text);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--accent-color);
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+    background-color: var(--dark-input-bg);
+    color: var(--dark-text);
+}
+
+/* Alerts */
+.alert {
+    position: relative;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.375rem;
+    border: none;
+}
+
+.alert-success {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--success-color);
+}
+
+.alert-danger {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: var(--danger-color);
+}
+
+.alert-warning {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: var(--warning-color);
+}
+
+.alert-info {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: var(--info-color);
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark-card-bg);
+    color: var(--dark-text);
+    padding: 1.5rem 0;
+    margin-top: auto;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+
+/* Utilities */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mt-5 { margin-top: 3rem; }
+
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+/* Responsive design */
+@media (max-width: 992px) {
+    .container {
+        width: 95%;
+    }
+    
+    .table {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .navbar .navbar-brand {
+        font-size: 1.1rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .hide-sm {
+        display: none;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .card-header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .card-body {
+        padding: 0.75rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    h2 {
+        font-size: 1.25rem;
+    }
+    
+    .table {
+        font-size: 0.8rem;
+    }
+}
+
+/* Icons in card headers */
+.card-header i.fas {
+    color: var(--accent-color) !important;
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+    text-shadow: 0 0 5px rgba(79, 70, 229, 0.5);
+}
+
+/* Special styling for section headers mentioned by user */
+.section-header {
+    background-image: linear-gradient(to right, rgba(79, 70, 229, 0.2), transparent) !important;
+    border-left: 4px solid var(--accent-color) !important;
+    padding-left: 1rem !important;
+}
+
+/* These are additional styles targeting common sections */
+.card-header-character,
+.card-header-financial, 
+.card-header-vehicles,
+.card-header-inventory,
+.card-header-metadata {
+    background-image: linear-gradient(to right, rgba(79, 70, 229, 0.2), transparent) !important;
+    border-left: 4px solid var(--accent-color) !important;
+    padding-left: 1rem !important;
+}
+
+/* Enhanced Card Headers - For Better Readability */
+.card-header {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--dark-border);
+    padding: 1rem 1.25rem;
+    font-weight: 700 !important;
+    font-size: 1.1rem !important;
+    color: var(--dark-text) !important;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+} 
