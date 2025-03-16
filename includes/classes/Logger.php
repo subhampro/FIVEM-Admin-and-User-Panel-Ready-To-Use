@@ -313,30 +313,92 @@ class Logger {
      * 
      * @param string $startDate Start date (Y-m-d)
      * @param string $endDate End date (Y-m-d)
-     * @param int $limit Limit (optional)
-     * @param int $offset Offset (optional)
-     * @return array|false Array of logs or false on failure
+     * @param string $actionType Action type (optional)
+     * @param int $userId User ID (optional)
+     * @return array Logs filtered by date range, action type and user
      */
-    public function getLogsByDateRange($startDate, $endDate, $limit = null, $offset = null) {
-        $query = "
-            SELECT l.*, u.username
-            FROM admin_actions_log l
-            JOIN website_users u ON l.admin_id = u.id
-            WHERE DATE(l.performed_at) BETWEEN ? AND ?
-            ORDER BY l.performed_at DESC
-        ";
+    public function getLogs($startDate = '', $endDate = '', $actionType = '', $userId = 0) {
+        $query = "SELECT al.*, wu.username 
+                FROM action_logs al 
+                LEFT JOIN website_users wu ON al.user_id = wu.id
+                WHERE 1=1";
+        $params = [];
+        $types = '';
         
-        $params = [$startDate, $endDate];
-        
-        if ($limit !== null) {
-            $query .= " LIMIT " . intval($limit);
-            
-            if ($offset !== null) {
-                $query .= " OFFSET " . intval($offset);
-            }
+        // Add date range filter
+        if (!empty($startDate)) {
+            $query .= " AND DATE(al.timestamp) >= ?";
+            $params[] = $startDate;
+            $types .= 's';
         }
         
-        return $this->db->getAll($query, $params);
+        if (!empty($endDate)) {
+            $query .= " AND DATE(al.timestamp) <= ?";
+            $params[] = $endDate;
+            $types .= 's';
+        }
+        
+        // Add action type filter
+        if (!empty($actionType)) {
+            $query .= " AND al.action_type = ?";
+            $params[] = $actionType;
+            $types .= 's';
+        }
+        
+        // Add user filter
+        if (!empty($userId) && $userId > 0) {
+            $query .= " AND al.user_id = ?";
+            $params[] = $userId;
+            $types .= 'i';
+        }
+        
+        // Order by timestamp
+        $query .= " ORDER BY al.timestamp DESC";
+        
+        $stmt = $this->conn->prepare($query);
+        
+        if (!$stmt) {
+            error_log("Prepare statement failed: " . $this->conn->error);
+            return [];
+        }
+        
+        // Bind parameters if we have any
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+        
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $logs = [];
+        
+        while ($row = $result->fetch_assoc()) {
+            $logs[] = $row;
+        }
+        
+        $stmt->close();
+        
+        return $logs;
+    }
+    
+    /**
+     * Get unique action types for filtering
+     * 
+     * @return array Array of unique action types
+     */
+    public function getUniqueActionTypes() {
+        $query = "SELECT DISTINCT action_type FROM action_logs ORDER BY action_type ASC";
+        $result = $this->db->query($query);
+        
+        if (!$result) {
+            return [];
+        }
+        
+        $types = [];
+        while ($row = $result->fetch_assoc()) {
+            $types[] = $row['action_type'];
+        }
+        
+        return $types;
     }
     
     /**

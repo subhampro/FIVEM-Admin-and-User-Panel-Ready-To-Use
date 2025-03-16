@@ -620,7 +620,7 @@ class User {
             
             $primaryLicense = $primaryPlayer['license'];
             error_log("Primary character license: " . $primaryLicense);
-            
+
             // Get license of new character
             $newPlayer = $player->getPlayerByCitizenId($newCitizenId);
             
@@ -631,12 +631,9 @@ class User {
             }
             
             $newLicense = $newPlayer['license'];
-            error_log("New character license: " . $newLicense);
             
             // Compare licenses
-            $licenseMatch = $primaryLicense === $newLicense;
-            error_log("License match result: " . ($licenseMatch ? "TRUE" : "FALSE"));
-            return $licenseMatch;
+            return $primaryLicense === $newLicense;
         } catch (Exception $e) {
             error_log("Error in verifyCharacterOwnership: " . $e->getMessage());
             return false;

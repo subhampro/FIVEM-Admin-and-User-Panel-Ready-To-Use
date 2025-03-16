@@ -84,23 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             if (!$isValid) {
                                 $message = 'This character does not appear to belong to you. Character licenses must match.';
                                 $messageType = 'danger';
-                                
-                                // Add debug info for admins
-                                if (isAdmin()) {
-                                    // Get licenses for debugging
-                                    $primaryChar = $userObj->getPrimaryCharacter($_SESSION['user_id']);
-                                    if ($primaryChar) {
-                                        $primaryCitizenId = $primaryChar['citizenid'];
-                                        $primaryPlayer = $playerObj->getPlayerByCitizenId($primaryCitizenId);
-                                        $newPlayer = $playerObj->getPlayerByCitizenId($newCitizenId);
-                                        
-                                        if ($primaryPlayer && isset($primaryPlayer['license']) && $newPlayer && isset($newPlayer['license'])) {
-                                            $message .= '<br><br><strong>Debug Info (Admin Only):</strong><br>';
-                                            $message .= 'Primary character license: ' . $primaryPlayer['license'] . '<br>';
-                                            $message .= 'New character license: ' . $newPlayer['license'];
-                                        }
-                                    }
-                                }
                             } else {
                                 // Add the character
                                 $result = $userObj->addCharacter($_SESSION['user_id'], $newCitizenId);
@@ -639,6 +622,12 @@ $pageTitle = 'Manage Characters - ' . getSetting('site_name', 'FiveM Server Dash
         </main>
     </div>
 </div>
+
+<footer class="bg-dark text-center text-white-50 py-3 mt-5">
+    <div class="container">
+        <p class="mb-0">Powered by PROHOSTVPS.com</p>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

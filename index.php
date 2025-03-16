@@ -184,7 +184,7 @@ $pageTitle = getSetting('site_name', 'FiveM Server Dashboard');
                     <p>&copy; <?php echo date('Y'); ?> <?php echo $pageTitle; ?>. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <p>Powered by FiveM</p>
+                    <p>Powered by PROHOSTVPS.com</p>
                 </div>
             </div>
         </div>
