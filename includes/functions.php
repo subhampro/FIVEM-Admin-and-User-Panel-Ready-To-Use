@@ -109,17 +109,19 @@ function endsWith($haystack, $needle) {
 }
 
 /**
- * Format money with currency symbol
+ * Format money value with currency symbol
  * 
- * @param float|null $amount Amount to format
- * @param string $currencySymbol Currency symbol
+ * @param float $amount Money amount
+ * @param string $symbol Currency symbol (defaults to $)
+ * @param int $decimals Number of decimal places
  * @return string Formatted money string
  */
-function formatMoney($amount, $currencySymbol = '$') {
-    if ($amount === null) {
-        return $currencySymbol . '0.00';
+function formatMoney($amount, $symbol = '$', $decimals = 2) {
+    if (!is_numeric($amount)) {
+        return $symbol . '0.00';
     }
-    return $currencySymbol . number_format((float)$amount, 2, '.', ',');
+    
+    return $symbol . number_format((float)$amount, $decimals, '.', ',');
 }
 
 /**

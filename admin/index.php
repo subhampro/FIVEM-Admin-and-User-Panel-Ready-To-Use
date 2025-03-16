@@ -5,6 +5,14 @@ require_once '../config/init.php';
 // Require admin privileges
 requireAdmin('admin_level1');
 
+// Check if user is level 1 admin only - redirect them to player search
+$user = new User();
+if ($user->hasAdminLevel($_SESSION['user_id'], 'admin_level1') && !$user->hasAdminLevel($_SESSION['user_id'], 'admin_level2')) {
+    // This user has only level 1 access, redirect to player search
+    redirect('player_search.php');
+    exit;
+}
+
 // Get admin dashboard statistics
 $admin = new Admin();
 $stats = $admin->getDashboardStats();

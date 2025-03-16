@@ -89,26 +89,94 @@ class Player {
     }
     
     /**
-     * Search players by various criteria
+     * Search for players by various criteria
      * 
-     * @param string $searchTerm Search term
-     * @return array|false Array of matching players or false on failure
+     * @param string $searchTerm The term to search for
+     * @param string $searchField Specific field to search in, or 'all' for all fields
+     * @return array Array of matching player records
      */
-    public function searchPlayers($searchTerm) {
-        $searchTerm = '%' . $searchTerm . '%';
+    public function searchPlayers($searchTerm, $searchField = 'all') {
+        $gameDb = $this->getGameDb();
+        if (!$gameDb) {
+            $this->logError("Failed to get game database connection in searchPlayers()");
+            return [];
+        }
         
-        $query = "
-            SELECT * FROM players 
-            WHERE citizenid LIKE ? 
-            OR name LIKE ? 
-            OR JSON_EXTRACT(charinfo, '$.firstname') LIKE ? 
-            OR JSON_EXTRACT(charinfo, '$.lastname') LIKE ? 
-            OR phone_number LIKE ?
-        ";
+        $searchTerm = trim($searchTerm);
+        if (empty($searchTerm)) {
+            return [];
+        }
         
-        return $this->db->getAll($query, [
-            $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm
-        ]);
+        try {
+            $query = "SELECT * FROM players WHERE ";
+            $params = [];
+            
+            // Build the search condition based on field
+            switch ($searchField) {
+                case 'citizenid':
+                    $query .= "citizenid LIKE ?";
+                    $params[] = "%$searchTerm%";
+                    break;
+                
+                case 'name':
+                    $query .= "(charinfo LIKE ? OR name LIKE ?)";
+                    $params[] = "%\"firstname\":\"%" . $searchTerm . "%\"%";
+                    $params[] = "%$searchTerm%";
+                    break;
+                
+                case 'license':
+                    $query .= "license LIKE ?";
+                    $params[] = "%$searchTerm%";
+                    break;
+                
+                case 'phone':
+                    $query .= "charinfo LIKE ?";
+                    $params[] = "%\"phone\":\"%" . $searchTerm . "%\"%";
+                    break;
+                
+                case 'all':
+                default:
+                    $query .= "(citizenid LIKE ? OR name LIKE ? OR license LIKE ? OR charinfo LIKE ?)";
+                    $params[] = "%$searchTerm%";
+                    $params[] = "%$searchTerm%";
+                    $params[] = "%$searchTerm%";
+                    $params[] = "%$searchTerm%";
+                    break;
+            }
+            
+            // Limit to 50 results for performance
+            $query .= " LIMIT 50";
+            
+            // Prepare and execute query
+            $stmt = $gameDb->prepare($query);
+            if (!$stmt) {
+                $this->logError("Failed to prepare player search query: " . $gameDb->error);
+                return [];
+            }
+            
+            if (!empty($params)) {
+                $types = str_repeat('s', count($params));
+                $stmt->bind_param($types, ...$params);
+            }
+            
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if (!$result) {
+                $this->logError("Failed to get result from player search: " . $stmt->error);
+                return [];
+            }
+            
+            $players = [];
+            while ($row = $result->fetch_assoc()) {
+                $players[] = $row;
+            }
+            
+            return $players;
+        } catch (Exception $e) {
+            $this->logError("Exception in searchPlayers(): " . $e->getMessage());
+            return [];
+        }
     }
     
     /**
@@ -196,43 +264,53 @@ class Player {
     }
     
     /**
-     * Get player's job info
+     * Get player's job information
      * 
-     * @param string $citizenid Citizen ID
-     * @return array|false Player job info or false if not found
+     * @param string $citizenId The citizen ID
+     * @return array|bool Job details as array or false on failure
      */
-    public function getPlayerJob($citizenid) {
-        if (!$this->gameDb || $this->gameDb->connect_error) {
-            error_log("getPlayerJob: Game database connection error");
+    public function getPlayerJob($citizenId) {
+        if (empty($citizenId)) {
+            return false;
+        }
+        
+        $gameDb = $this->getGameDb();
+        if (!$gameDb) {
+            $this->logError("Failed to get game database connection in getPlayerJob()");
             return false;
         }
         
         try {
-            $stmt = $this->gameDb->prepare("SELECT job FROM players WHERE citizenid = ?");
-            $stmt->bind_param("s", $citizenid);
+            $stmt = $gameDb->prepare("SELECT job FROM players WHERE citizenid = ?");
+            if (!$stmt) {
+                $this->logError("Failed to prepare getPlayerJob query: " . $gameDb->error);
+                return false;
+            }
+            
+            $stmt->bind_param('s', $citizenId);
             $stmt->execute();
             $result = $stmt->get_result();
             
-            if (!$result || $result->num_rows === 0) {
-                error_log("getPlayerJob: No data found for citizenid: $citizenid");
+            if (!$result) {
+                $this->logError("Failed to get result for getPlayerJob: " . $stmt->error);
                 return false;
             }
             
-            $data = $result->fetch_assoc();
-            if (!isset($data['job']) || $data['job'] === null) {
-                error_log("getPlayerJob: Job info is null for citizenid: $citizenid");
+            $row = $result->fetch_assoc();
+            if (!$row || !isset($row['job'])) {
                 return false;
             }
             
-            $job = json_decode($data['job'], true);
-            if ($job === null && json_last_error() !== JSON_ERROR_NONE) {
-                error_log("getPlayerJob: JSON decode error: " . json_last_error_msg() . " for citizenid: $citizenid");
-                return [];
+            // Try to decode job information
+            $jobData = json_decode($row['job'], true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $this->logError("Failed to decode job JSON for citizen ID: $citizenId");
+                return false;
             }
             
-            return $job ?: [];
+            return $jobData;
         } catch (Exception $e) {
-            error_log("getPlayerJob error: " . $e->getMessage() . " for citizenid: $citizenid");
+            $this->logError("Exception in getPlayerJob(): " . $e->getMessage());
             return false;
         }
     }
@@ -438,56 +516,63 @@ class Player {
     /**
      * Get player's vehicles
      * 
-     * @param string $citizenid Citizen ID
-     * @return array|false Player vehicles or false if not found
+     * @param string $citizenId The citizen ID
+     * @return array|bool Array of vehicles or false on failure
      */
-    public function getPlayerVehicles($citizenid) {
-        if (!$this->gameDb || $this->gameDb->connect_error) {
-            error_log("getPlayerVehicles: Game database connection error");
+    public function getPlayerVehicles($citizenId) {
+        if (empty($citizenId)) {
+            return false;
+        }
+        
+        $gameDb = $this->getGameDb();
+        if (!$gameDb) {
+            $this->logError("Failed to get game database connection in getPlayerVehicles()");
             return false;
         }
         
         try {
-            // First check if player_vehicles table exists in game database
-            $result = $this->gameDb->query("SHOW TABLES LIKE 'player_vehicles'");
-            if ($result && $result->num_rows > 0) {
-                // player_vehicles table exists, query it
-                $stmt = $this->gameDb->prepare("SELECT * FROM player_vehicles WHERE citizenid = ?");
-                $stmt->bind_param("s", $citizenid);
-                $stmt->execute();
-                $result = $stmt->get_result();
-                
-                if (!$result) {
-                    error_log("getPlayerVehicles: Query error for citizenid: $citizenid");
-                    return false;
-                }
-                
-                $vehicles = [];
-                while ($vehicle = $result->fetch_assoc()) {
-                    // Format vehicle data for display
-                    $vehicles[] = [
-                        'name' => isset($vehicle['vehicle']) ? $vehicle['vehicle'] : 'Unknown Vehicle',
-                        'plate' => isset($vehicle['plate']) ? $vehicle['plate'] : '',
-                        'garage' => isset($vehicle['garage']) ? $vehicle['garage'] : 'Unknown',
-                        'state' => isset($vehicle['state']) ? $vehicle['state'] : 0,
-                        'fuel' => isset($vehicle['fuel']) ? $vehicle['fuel'] : 100,
-                        'engine' => isset($vehicle['engine']) ? $vehicle['engine'] : 1000,
-                        'body' => isset($vehicle['body']) ? $vehicle['body'] : 1000
-                    ];
-                }
-                
-                return $vehicles;
-            } else {
-                // Try checking player data for vehicles in metadata
-                $metadata = $this->getPlayerMetadata($citizenid);
-                if ($metadata && isset($metadata['vehicles']) && is_array($metadata['vehicles'])) {
-                    return $metadata['vehicles'];
-                }
-                
-                return [];
+            // Check if player_vehicles table exists
+            $checkTable = $gameDb->query("SHOW TABLES LIKE 'player_vehicles'");
+            $usePlayersVehicles = $checkTable && $checkTable->num_rows > 0;
+            
+            $tableName = $usePlayersVehicles ? 'player_vehicles' : 'owned_vehicles';
+            $ownerField = $usePlayersVehicles ? 'citizenid' : 'owner';
+            
+            // Prepare query based on table structure
+            $query = "SELECT * FROM $tableName WHERE $ownerField = ?";
+            $stmt = $gameDb->prepare($query);
+            
+            if (!$stmt) {
+                $this->logError("Failed to prepare getPlayerVehicles query: " . $gameDb->error);
+                return false;
             }
+            
+            $stmt->bind_param('s', $citizenId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if (!$result) {
+                $this->logError("Failed to get result for getPlayerVehicles: " . $stmt->error);
+                return false;
+            }
+            
+            $vehicles = [];
+            while ($row = $result->fetch_assoc()) {
+                // Process vehicle data
+                if (isset($row['mods']) && !is_array($row['mods'])) {
+                    $row['mods'] = json_decode($row['mods'], true);
+                }
+                
+                if (isset($row['vehicle']) && !is_array($row['vehicle'])) {
+                    $row['vehicle'] = json_decode($row['vehicle'], true);
+                }
+                
+                $vehicles[] = $row;
+            }
+            
+            return $vehicles;
         } catch (Exception $e) {
-            error_log("getPlayerVehicles error: " . $e->getMessage() . " for citizenid: $citizenid");
+            $this->logError("Exception in getPlayerVehicles(): " . $e->getMessage());
             return false;
         }
     }
@@ -521,53 +606,48 @@ class Player {
     /**
      * Get player's last login time
      * 
-     * @param string $citizenid Citizen ID
-     * @return string|false Last login time or false if not found
+     * @param string $citizenId The citizen ID
+     * @return string|bool Last login timestamp or false on failure
      */
-    public function getLastLoginTime($citizenid) {
-        if (!$this->gameDb || $this->gameDb->connect_error) {
-            error_log("getLastLoginTime: Game database connection error");
+    public function getLastLoginTime($citizenId) {
+        if (empty($citizenId)) {
+            return false;
+        }
+        
+        $gameDb = $this->getGameDb();
+        if (!$gameDb) {
+            $this->logError("Failed to get game database connection in getLastLoginTime()");
             return false;
         }
         
         try {
-            $stmt = $this->gameDb->prepare("SELECT last_updated FROM players WHERE citizenid = ?");
-            $stmt->bind_param("s", $citizenid);
-            $stmt->execute();
-            $result = $stmt->get_result();
+            // Try different column names used in different QBCore versions
+            $columns = ['last_login', 'last_updated', 'lastupdated', 'lastlogin'];
             
-            if (!$result || $result->num_rows === 0) {
-                error_log("getLastLoginTime: No data found for citizenid: $citizenid");
-                return false;
-            }
-            
-            $data = $result->fetch_assoc();
-            if (isset($data['last_updated'])) {
-                return $data['last_updated'];
-            }
-            
-            // Try alternative column names that might contain last login time
-            $stmt = $this->gameDb->prepare("SELECT lastlogin FROM players WHERE citizenid = ?");
-            $stmt->bind_param("s", $citizenid);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            if ($result && $result->num_rows > 0) {
-                $data = $result->fetch_assoc();
-                if (isset($data['lastlogin'])) {
-                    return $data['lastlogin'];
+            foreach ($columns as $column) {
+                // Check if the column exists
+                $checkColumn = $gameDb->query("SHOW COLUMNS FROM players LIKE '$column'");
+                if ($checkColumn && $checkColumn->num_rows > 0) {
+                    // Column exists, use it
+                    $stmt = $gameDb->prepare("SELECT $column FROM players WHERE citizenid = ?");
+                    if (!$stmt) {
+                        continue; // Try next column
+                    }
+                    
+                    $stmt->bind_param('s', $citizenId);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    
+                    if ($result && $row = $result->fetch_assoc()) {
+                        return isset($row[$column]) ? $row[$column] : false;
+                    }
                 }
             }
             
-            // As a last resort, try checking metadata
-            $metadata = $this->getPlayerMetadata($citizenid);
-            if ($metadata && isset($metadata['lastLogin'])) {
-                return $metadata['lastLogin'];
-            }
-            
+            // If we're here, none of the columns were found or usable
             return false;
         } catch (Exception $e) {
-            error_log("getLastLoginTime error: " . $e->getMessage() . " for citizenid: $citizenid");
+            $this->logError("Exception in getLastLoginTime(): " . $e->getMessage());
             return false;
         }
     }
@@ -693,6 +773,63 @@ class Player {
      */
     public function deletePlayer($id) {
         return $this->db->delete('players', 'id = ?', [$id]);
+    }
+
+    /**
+     * Get a player by their citizen ID
+     * 
+     * @param string $citizenId The citizen ID to search for
+     * @return array|bool Player record or false if not found
+     */
+    public function getPlayerByCitizenId($citizenId) {
+        if (empty($citizenId)) {
+            return false;
+        }
+        
+        $gameDb = $this->getGameDb();
+        if (!$gameDb) {
+            $this->logError("Failed to get game database connection in getPlayerByCitizenId()");
+            return false;
+        }
+        
+        try {
+            $stmt = $gameDb->prepare("SELECT * FROM players WHERE citizenid = ?");
+            if (!$stmt) {
+                $this->logError("Failed to prepare getPlayerByCitizenId query: " . $gameDb->error);
+                return false;
+            }
+            
+            $stmt->bind_param('s', $citizenId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if (!$result) {
+                $this->logError("Failed to get result for getPlayerByCitizenId: " . $stmt->error);
+                return false;
+            }
+            
+            $player = $result->fetch_assoc();
+            return $player ?: false;
+        } catch (Exception $e) {
+            $this->logError("Exception in getPlayerByCitizenId(): " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Log an error message to the error log
+     * 
+     * @param string $message Error message to log
+     * @return void
+     */
+    private function logError($message) {
+        // Make sure logs directory exists
+        if (!file_exists('../logs')) {
+            mkdir('../logs', 0777, true);
+        }
+        
+        // Log error to file
+        error_log('[' . date('Y-m-d H:i:s') . '] ' . $message . PHP_EOL, 3, '../logs/player_errors.log');
     }
 }
 ?> 
