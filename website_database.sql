@@ -100,6 +100,19 @@ CREATE TABLE IF NOT EXISTS `api_tokens` (
   CONSTRAINT `fk_api_tokens_website_users` FOREIGN KEY (`user_id`) REFERENCES `website_users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Create table for admin notifications
+CREATE TABLE IF NOT EXISTS `admin_notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `fk_admin_notifications_website_users` FOREIGN KEY (`user_id`) REFERENCES `website_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Create table for remember me tokens
 CREATE TABLE IF NOT EXISTS `remember_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
