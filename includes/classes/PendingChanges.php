@@ -109,63 +109,82 @@ class PendingChanges {
     /**
      * Approve a pending change and apply it to the database
      * 
-     * @param int $id The pending change ID
+     * @param int $changeId The pending change ID
      * @param int $reviewerId The admin user ID who approved the change
      * @param string $comments Comments about the approval
      * @return bool True on success, false on failure
      */
-    public function approveChange($id, $reviewerId, $comments = '') {
-        // Start transaction
-        $this->conn->begin_transaction();
+    public function approveChange($changeId, $reviewerId, $comments = '') {
+        global $logger;
         
         try {
-            // Get the pending change
-            $change = $this->getPendingChangeById($id);
+            // Start a transaction
+            $this->db->beginTransaction();
+            
+            // Check if the pending change exists and is pending
+            $stmtCheck = $this->db->prepare("SELECT * FROM pending_changes WHERE id = :id AND status = 'pending'");
+            $stmtCheck->bindParam(':id', $changeId, PDO::PARAM_INT);
+            $stmtCheck->execute();
+            $change = $stmtCheck->fetch(PDO::FETCH_ASSOC);
             
             if (!$change) {
-                throw new Exception("Pending change #{$id} not found");
+                $logger->logError("Failed to approve change: Change ID {$changeId} does not exist or is not pending");
+                $this->db->rollBack();
+                return false;
             }
             
-            if ($change['status'] !== 'pending') {
-                throw new Exception("Pending change #{$id} already processed with status: {$change['status']}");
+            // Apply the change to the database
+            $applied = $this->applyChange($change);
+            
+            if (!$applied) {
+                $logger->logError("Failed to apply change ID {$changeId}");
+                $this->db->rollBack();
+                return false;
             }
             
-            // Apply the change to the target table
-            $success = $this->applyChange($change);
+            // Update the pending change status to approved
+            $reviewedAt = date('Y-m-d H:i:s');
+            $updateStmt = $this->db->prepare("
+                UPDATE pending_changes 
+                SET status = 'approved', 
+                    reviewer_id = :reviewer_id, 
+                    reviewed_at = :reviewed_at, 
+                    review_comments = :comments 
+                WHERE id = :id
+            ");
             
-            if (!$success) {
-                throw new Exception("Failed to apply change to database for change #{$id}");
-            }
+            $updateStmt->bindParam(':reviewer_id', $reviewerId, PDO::PARAM_INT);
+            $updateStmt->bindParam(':reviewed_at', $reviewedAt, PDO::PARAM_STR);
+            $updateStmt->bindParam(':comments', $comments, PDO::PARAM_STR);
+            $updateStmt->bindParam(':id', $changeId, PDO::PARAM_INT);
             
-            // Update the pending change status
-            $updateQuery = "UPDATE pending_changes SET 
-                            status = 'approved', 
-                            reviewer_id = ?, 
-                            reviewed_at = NOW(), 
-                            review_comments = ? 
-                            WHERE id = ?";
-            
-            $updateParams = [
-                $reviewerId,
-                $comments,
-                $id
-            ];
-            
-            $result = $this->db->query($updateQuery, $updateParams);
+            $result = $updateStmt->execute();
             
             if (!$result) {
-                throw new Exception("Failed to update pending change status for change #{$id}");
+                $logger->logError("Failed to update pending change status for change #{$changeId}");
+                $this->db->rollBack();
+                return false;
             }
             
-            // Commit transaction
-            $this->conn->commit();
-            error_log("Successfully approved change #{$id}");
+            // Log the approval
+            $logger->logAction(
+                $reviewerId, 
+                'pending_change', 
+                "Approved change request #{$changeId}: {$change['target_table']}.{$change['field_name']} for {$change['target_id']}"
+            );
+            
+            // Commit the transaction
+            $this->db->commit();
             return true;
+            
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            $logger->logError("Database error in approveChange: " . $e->getMessage());
+            return false;
         } catch (Exception $e) {
-            // Rollback transaction on error
-            $this->conn->rollback();
-            error_log("Error approving change #{$id}: " . $e->getMessage());
-            throw $e;
+            $this->db->rollBack();
+            $logger->logError("Error in approveChange: " . $e->getMessage());
+            return false;
         }
     }
     

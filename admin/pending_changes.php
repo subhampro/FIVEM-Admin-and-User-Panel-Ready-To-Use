@@ -109,6 +109,339 @@ $pageTitle = 'Pending Changes - Admin Dashboard';
 include_once '../includes/header.php';
 ?>
 
+<style>
+    /* Dark theme optimizations for pending changes page */
+    body {
+        background-color: #121212;
+        color: #f8f9fa;
+    }
+    
+    .container-fluid {
+        background-color: #121212;
+        color: #f8f9fa;
+        min-height: 100vh;
+        padding-bottom: 2rem;
+    }
+    
+    .card {
+        background-color: #1e1e1e !important;
+        border-color: #2a2e32 !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        margin-bottom: 1.5rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .card-header {
+        background-color: #2a2e32 !important;
+        border-bottom: 1px solid #121212 !important;
+        color: white !important;
+        font-weight: 600;
+        padding: 1rem 1.25rem;
+    }
+    
+    .card-body {
+        background-color: #1e1e1e !important;
+        color: #f8f9fa !important;
+        padding: 1.5rem;
+    }
+    
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
+    }
+    
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
+    }
+    
+    .border-left-danger {
+        border-left: 0.25rem solid #e74a3b !important;
+    }
+    
+    .text-xs {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .text-warning {
+        color: #f6c23e !important;
+    }
+    
+    .text-success {
+        color: #1cc88a !important;
+    }
+    
+    .text-danger {
+        color: #e74a3b !important;
+    }
+    
+    .text-gray-300 {
+        color: #dddfeb !important;
+    }
+    
+    .font-weight-bold, .h5 {
+        color: white !important;
+    }
+    
+    .sidebar {
+        background-color: #1a1a1a;
+        min-height: 100vh;
+        border-right: 1px solid #2a2e32;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .sidebar .nav-link {
+        color: #b3b3b3;
+        transition: all 0.2s;
+        padding: 0.75rem 1rem;
+        border-radius: 0.25rem;
+        margin: 0.2rem 0;
+    }
+    
+    .sidebar .nav-link:hover {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar .nav-link.active {
+        color: white;
+        background-color: #4f46e5;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .table-dark {
+        background-color: #1e1e1e;
+        color: #f8f9fa;
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+    
+    .table-dark th {
+        background-color: #2a2e32;
+        color: white;
+        border-color: #121212 !important;
+        padding: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .table-dark td {
+        border-color: #2a2e32 !important;
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+    }
+    
+    .table-hover.table-dark tbody tr:hover {
+        background-color: #2a2e32 !important;
+    }
+    
+    .page-link.bg-dark {
+        background-color: #1e1e1e !important;
+        border-color: #2a2e32 !important;
+    }
+    
+    .page-item.active .page-link {
+        background-color: #4f46e5 !important;
+        border-color: #4f46e5 !important;
+        box-shadow: 0 0 5px rgba(79, 70, 229, 0.5);
+    }
+    
+    .page-link:hover {
+        background-color: #2a2e32 !important;
+        z-index: 1;
+    }
+    
+    .badge {
+        padding: 0.4em 0.65em;
+        font-weight: 600;
+        border-radius: 0.375rem;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-sm {
+        padding: 0.3rem 0.6rem;
+        margin: 0 3px;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        transition: all 0.2s;
+    }
+    
+    .btn-sm:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Action buttons */
+    .view-change {
+        background-color: #0dcaf0 !important;
+        border-color: #0dcaf0 !important;
+    }
+    
+    .approve-change {
+        background-color: #1cc88a !important;
+        border-color: #1cc88a !important;
+    }
+    
+    .reject-change {
+        background-color: #e74a3b !important;
+        border-color: #e74a3b !important;
+    }
+    
+    /* Fix action buttons layout */
+    td .btn-group, td .d-flex {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        gap: 0.25rem;
+    }
+    
+    /* Modal styling improvements */
+    .modal-content.bg-dark {
+        background-color: #1e1e1e !important;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        border: 1px solid #2a2e32;
+    }
+    
+    .modal-header.border-secondary {
+        border-bottom-color: #2a2e32 !important;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .modal-footer.border-secondary {
+        border-top-color: #2a2e32 !important;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .btn-close-white {
+        opacity: 0.7;
+        transition: opacity 0.2s;
+    }
+    
+    .btn-close-white:hover {
+        opacity: 1;
+    }
+    
+    /* Alerts styling */
+    .alert {
+        border-radius: 0.5rem;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        border: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .alert-info {
+        background-color: rgba(13, 202, 240, 0.15) !important;
+        color: #0dcaf0 !important;
+    }
+    
+    .alert-warning {
+        background-color: rgba(246, 194, 62, 0.15) !important;
+        color: #f6c23e !important;
+    }
+    
+    .alert-danger {
+        background-color: rgba(231, 74, 59, 0.15) !important;
+        color: #e74a3b !important;
+    }
+    
+    .alert-success {
+        background-color: rgba(28, 200, 138, 0.15) !important;
+        color: #1cc88a !important;
+    }
+    
+    /* Stats cards improvements */
+    .shadow {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .py-2 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .sidebar {
+            min-height: auto;
+            margin-bottom: 1rem;
+        }
+        
+        .col-md-4 {
+            margin-bottom: 1rem;
+        }
+        
+        .table-responsive {
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .modal-dialog {
+            margin: 0.5rem;
+        }
+        
+        .d-flex {
+            flex-wrap: wrap !important;
+        }
+        
+        td .d-flex {
+            justify-content: center !important;
+        }
+        
+        .card-body {
+            padding: 1rem;
+        }
+    }
+    
+    /* Animation effects */
+    .fade-in {
+        animation: fadeIn 0.3s ease-in;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #1a1a1a;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #3a3a3a;
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #4a4a4a;
+    }
+</style>
+
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
@@ -282,8 +615,8 @@ include_once '../includes/header.php';
             </ul>
             
             <!-- Changes Table -->
-            <div class="card mb-4">
-                <div class="card-header bg-dark text-light">
+            <div class="card mb-4 shadow">
+                <div class="card-header bg-dark text-light d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <?php if ($status === 'pending'): ?>
                             <i class="fas fa-clock me-1"></i> Pending Changes
@@ -294,37 +627,42 @@ include_once '../includes/header.php';
                         <?php endif; ?>
                         <span class="badge bg-secondary ms-2"><?php echo $totalCount; ?> total</span>
                     </h5>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary" id="refreshData">
+                            <i class="fas fa-sync-alt me-1"></i> Refresh
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body bg-dark text-light">
                     <?php if (empty($changes)): ?>
-                        <div class="alert alert-info bg-info bg-opacity-25 text-info">
+                        <div class="alert alert-info fade-in">
                             <i class="fas fa-info-circle me-1"></i> No <?php echo $status; ?> changes found.
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover table-dark">
+                            <table class="table table-hover table-dark align-middle">
                                 <thead>
                                     <tr>
-                                        <th width="5%">ID</th>
+                                        <th class="text-center" width="5%">ID</th>
                                         <th width="15%">Admin</th>
                                         <th width="10%">Table</th>
                                         <th width="15%">Target ID</th>
                                         <th width="15%">Field</th>
                                         <th width="15%">Requested</th>
-                                        <th width="10%">Status</th>
-                                        <th width="15%">Actions</th>
+                                        <th class="text-center" width="10%">Status</th>
+                                        <th class="text-center" width="15%">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($changes as $change): ?>
-                                        <tr>
-                                            <td><?php echo $change['id']; ?></td>
+                                        <tr class="fade-in">
+                                            <td class="text-center fw-bold"><?php echo $change['id']; ?></td>
                                             <td><?php echo htmlspecialchars($change['admin_username'] ?? 'Unknown'); ?></td>
-                                            <td><?php echo htmlspecialchars($change['target_table']); ?></td>
-                                            <td><?php echo htmlspecialchars($change['target_id']); ?></td>
-                                            <td><?php echo htmlspecialchars($change['field_name']); ?></td>
+                                            <td><span class="badge bg-secondary"><?php echo htmlspecialchars($change['target_table']); ?></span></td>
+                                            <td class="text-truncate" style="max-width: 150px;" title="<?php echo htmlspecialchars($change['target_id']); ?>"><?php echo htmlspecialchars($change['target_id']); ?></td>
+                                            <td class="text-truncate" style="max-width: 150px;" title="<?php echo htmlspecialchars($change['field_name']); ?>"><?php echo htmlspecialchars($change['field_name']); ?></td>
                                             <td><?php echo date('Y-m-d H:i', strtotime($change['created_at'])); ?></td>
-                                            <td>
+                                            <td class="text-center">
                                                 <?php if ($change['status'] === 'pending'): ?>
                                                     <span class="badge bg-warning text-dark">Pending</span>
                                                 <?php elseif ($change['status'] === 'approved'): ?>
@@ -333,31 +671,33 @@ include_once '../includes/header.php';
                                                     <span class="badge bg-danger">Rejected</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-info view-change" data-bs-toggle="modal" data-bs-target="#viewChangeModal" 
-                                                        data-id="<?php echo $change['id']; ?>"
-                                                        data-admin="<?php echo htmlspecialchars($change['admin_username'] ?? 'Unknown'); ?>"
-                                                        data-table="<?php echo htmlspecialchars($change['target_table']); ?>"
-                                                        data-target="<?php echo htmlspecialchars($change['target_id']); ?>"
-                                                        data-field="<?php echo htmlspecialchars($change['field_name']); ?>"
-                                                        data-old="<?php echo htmlspecialchars($change['old_value']); ?>"
-                                                        data-new="<?php echo htmlspecialchars($change['new_value']); ?>"
-                                                        data-status="<?php echo $change['status']; ?>"
-                                                        data-created="<?php echo date('Y-m-d H:i:s', strtotime($change['created_at'])); ?>"
-                                                        data-reviewer="<?php echo htmlspecialchars($change['reviewer_username'] ?? 'N/A'); ?>"
-                                                        data-reviewed="<?php echo $change['reviewed_at'] ? date('Y-m-d H:i:s', strtotime($change['reviewed_at'])) : 'N/A'; ?>"
-                                                        data-comments="<?php echo htmlspecialchars($change['review_comments'] ?? ''); ?>">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                
-                                                <?php if ($change['status'] === 'pending'): ?>
-                                                    <button type="button" class="btn btn-sm btn-success approve-change" data-bs-toggle="modal" data-bs-target="#approveModal" data-id="<?php echo $change['id']; ?>">
-                                                        <i class="fas fa-check"></i>
+                                            <td class="text-center">
+                                                <div class="d-flex justify-content-center">
+                                                    <button type="button" class="btn btn-sm btn-info view-change" data-bs-toggle="modal" data-bs-target="#viewChangeModal" 
+                                                            data-id="<?php echo $change['id']; ?>"
+                                                            data-admin="<?php echo htmlspecialchars($change['admin_username'] ?? 'Unknown'); ?>"
+                                                            data-table="<?php echo htmlspecialchars($change['target_table']); ?>"
+                                                            data-target="<?php echo htmlspecialchars($change['target_id']); ?>"
+                                                            data-field="<?php echo htmlspecialchars($change['field_name']); ?>"
+                                                            data-old="<?php echo htmlspecialchars($change['old_value']); ?>"
+                                                            data-new="<?php echo htmlspecialchars($change['new_value']); ?>"
+                                                            data-status="<?php echo $change['status']; ?>"
+                                                            data-created="<?php echo date('Y-m-d H:i:s', strtotime($change['created_at'])); ?>"
+                                                            data-reviewer="<?php echo htmlspecialchars($change['reviewer_username'] ?? 'N/A'); ?>"
+                                                            data-reviewed="<?php echo $change['reviewed_at'] ? date('Y-m-d H:i:s', strtotime($change['reviewed_at'])) : 'N/A'; ?>"
+                                                            data-comments="<?php echo htmlspecialchars($change['review_comments'] ?? ''); ?>">
+                                                        <i class="fas fa-eye"></i>
                                                     </button>
-                                                    <button type="button" class="btn btn-sm btn-danger reject-change" data-bs-toggle="modal" data-bs-target="#rejectModal" data-id="<?php echo $change['id']; ?>">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                <?php endif; ?>
+                                                    
+                                                    <?php if ($change['status'] === 'pending'): ?>
+                                                        <button type="button" class="btn btn-sm btn-success approve-change" data-bs-toggle="modal" data-bs-target="#approveModal" data-id="<?php echo $change['id']; ?>">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger reject-change" data-bs-toggle="modal" data-bs-target="#rejectModal" data-id="<?php echo $change['id']; ?>">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -609,11 +949,11 @@ $(document).ready(function() {
         // Format status with badge
         let statusHtml = '';
         if (status === 'pending') {
-            statusHtml = '<span class="badge pending-badge">Pending</span>';
+            statusHtml = '<span class="badge bg-warning text-dark">Pending</span>';
         } else if (status === 'approved') {
-            statusHtml = '<span class="badge approved-badge">Approved</span>';
+            statusHtml = '<span class="badge bg-success">Approved</span>';
         } else {
-            statusHtml = '<span class="badge rejected-badge">Rejected</span>';
+            statusHtml = '<span class="badge bg-danger">Rejected</span>';
         }
         $('#viewStatus').html(statusHtml);
         
@@ -650,7 +990,20 @@ $(document).ready(function() {
         const id = $(this).data('id');
         $('#rejectChangeId').val(id);
     });
+    
+    // Refresh button functionality
+    $('#refreshData').click(function() {
+        // Show loading spinner
+        $(this).html('<i class="fas fa-spinner fa-spin"></i> Loading...');
+        // Reload the page
+        location.reload();
+    });
+    
+    // Add hover effects
+    $('.table-dark tr').hover(
+        function() { $(this).addClass('bg-hover'); },
+        function() { $(this).removeClass('bg-hover'); }
+    );
 });
 </script>
-</body>
-</html> 
+<?php include_once '../includes/footer.php'; ?> 

@@ -337,9 +337,9 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fas fa-user-circle"></i> <?php echo $_SESSION['username']; ?>
-                            <?php if (isAdmin()): ?>
-                            <span class="admin-level <?php echo 'admin-level-' . substr($_SESSION['role'], -1); ?>">
-                                <?php echo getAdminLevelName($_SESSION['role']); ?>
+                            <?php if (isAdmin() && isset($_SESSION['role'])): ?>
+                            <span class="admin-level <?php echo 'admin-level-' . (isset($_SESSION['role']) ? substr($_SESSION['role'], -1) : '1'); ?>">
+                                <?php echo getAdminLevelName($_SESSION['role'] ?? 'admin_level1'); ?>
                             </span>
                             <?php endif; ?>
                         </a>
