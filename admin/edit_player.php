@@ -445,6 +445,14 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                         <!-- Character Info Tab -->
                         <div class="tab-pane fade show active" id="character" role="tabpanel" aria-labelledby="character-tab">
                             <div class="list-group">
+                                <!-- Character Avatar -->
+                                <div class="list-group-item">
+                                    <h5 class="mb-1">Character Avatar</h5>
+                                    <div class="text-center mb-3">
+                                        <img src="https://i.imgur.com/4H2c5AB.gif" alt="Character Avatar" class="img-fluid rounded" style="max-width: 150px; max-height: 150px; border: 3px solid #2a2e32;">
+                                    </div>
+                                </div>
+                                
                                 <!-- Full Name (First Name and Last Name) -->
                                 <div class="list-group-item">
                                     <h5 class="mb-1">Edit Full Name</h5>

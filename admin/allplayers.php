@@ -215,6 +215,7 @@ $pageTitle = 'All Players - Admin Dashboard';
                             <div class="player-card">
                                 <div class="player-header">
                                     <div>
+                                        <img src="https://i.imgur.com/4H2c5AB.gif" alt="Player Avatar" class="img-fluid rounded mb-2" style="max-width: 50px; max-height: 50px; border: 2px solid #2a2e32;">
                                         <div class="player-name"><?php echo htmlspecialchars($player['name'] ?? 'Unknown'); ?></div>
                                         <div class="player-citizenid"><?php echo htmlspecialchars($player['citizenid'] ?? $player['id']); ?></div>
                                         <?php if (isset($player['name']) && !empty($player['name'])): ?>

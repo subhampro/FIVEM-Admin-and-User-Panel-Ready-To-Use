@@ -1,0 +1,33 @@
+[16-Mar-2025 11:39:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:39:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:39:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:39:20 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 11:39:26 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:39:27 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:39:27 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:39:27 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:39:27 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 11:42:46 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:42:46 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:42:46 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:42:46 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 11:42:47 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:42:47 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:42:47 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 11:42:47 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+

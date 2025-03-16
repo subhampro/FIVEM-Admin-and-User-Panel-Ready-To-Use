@@ -540,6 +540,9 @@ $pageTitle = 'Player Management - Admin Dashboard';
                                 <div class="row">
                                     <div class="col-md-6">
                                         <h6 class="mb-3">Character Information</h6>
+                                        <div class="mb-3 text-center">
+                                            <img src="https://i.imgur.com/4H2c5AB.gif" alt="Character Avatar" class="img-fluid rounded" style="max-width: 150px; max-height: 150px; border: 3px solid #2a2e32;">
+                                        </div>
                                         <table class="table table-bordered">
                                             <tbody>
                                                 <tr>
