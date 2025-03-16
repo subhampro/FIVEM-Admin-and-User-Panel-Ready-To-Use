@@ -47,51 +47,45 @@ $playerDetails = [
     'lastLogin' => $player->getLastLoginTime($citizenid)
 ];
 
-// Process the form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit') {
-    // Get field data
-    $field = $_POST['field'] ?? '';
-    $subfield = $_POST['subfield'] ?? '';
+// Process the edit form
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_player'])) {
+    $citizenId = $_POST['citizen_id'] ?? '';
+    $fieldName = $_POST['field_name'] ?? '';
     $oldValue = $_POST['old_value'] ?? '';
     $newValue = $_POST['new_value'] ?? '';
-    $targetTable = $_POST['target_table'] ?? 'players';
     
-    if (empty($field)) {
-        $message = 'Field name is required.';
+    // Validate inputs
+    if (empty($citizenId) || empty($fieldName) || empty($newValue) || !isset($_SESSION['user_id'])) {
         $messageType = 'danger';
-    } elseif ($newValue === $oldValue) {
-        $message = 'No changes were made to the value.';
-        $messageType = 'warning';
+        $message = 'Invalid input data. Please check all fields.';
     } else {
-        // Add the change to pending_changes table
-        try {
-            $result = $pendingChanges->addPendingChange(
+        // Initialize PendingChanges class
+        $pendingChanges = new PendingChanges();
+        
+        // Add the change request to pending_changes table
+        $result = $pendingChanges->addPendingChange(
+            $_SESSION['user_id'],
+            'players',
+            $citizenId,
+            $fieldName,
+            $oldValue,
+            $newValue
+        );
+        
+        if ($result) {
+            // Log the action
+            $logger->logAction(
                 $_SESSION['user_id'],
-                $targetTable,
-                $citizenid,
-                $field . ($subfield ? '.' . $subfield : ''),
-                $oldValue,
-                $newValue
+                'edit_request',
+                "Submitted edit request for player {$citizenId} - field: {$fieldName}"
             );
             
-            if ($result) {
-                // Log the action
-                $logger->logAction(
-                    $_SESSION['user_id'],
-                    'edit_player_request',
-                    "Requested edit for player {$citizenid}, field: {$field}" . ($subfield ? ".{$subfield}" : "") . ", old: {$oldValue}, new: {$newValue}"
-                );
-                
-                $message = 'Edit request submitted for approval. The change will take effect after it has been approved.';
-                $messageType = 'success';
-            } else {
-                $message = 'Failed to submit the edit request. Please try again.';
-                $messageType = 'danger';
-            }
-        } catch (Exception $e) {
-            $message = 'Error: ' . $e->getMessage();
+            $messageType = 'success';
+            $message = 'Edit request submitted successfully. It will be reviewed by an administrator.';
+        } else {
+            error_log("Failed to submit edit request for player {$citizenId} - field: {$fieldName}");
             $messageType = 'danger';
-            error_log("Error in edit_player.php: " . $e->getMessage());
+            $message = 'Failed to submit the edit request. Please try again.';
         }
     }
 }

@@ -27,29 +27,40 @@ class PendingChanges {
      */
     public function addPendingChange($adminId, $targetTable, $targetId, $fieldName, $oldValue, $newValue) {
         try {
-            $query = "INSERT INTO pending_changes (admin_id, target_table, target_id, field_name, old_value, new_value, status, created_at) 
-                      VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
+            // Prepare the statement
+            $stmt = $this->conn->prepare("INSERT INTO pending_changes (admin_id, target_table, target_id, field_name, old_value, new_value, status, created_at) 
+                                         VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())");
             
-            $params = [
-                $adminId,
-                $targetTable,
-                $targetId,
-                $fieldName,
-                $oldValue,
-                $newValue
-            ];
-            
-            $result = $this->db->query($query, $params);
-            if ($result) {
-                error_log("Successfully added pending change for {$targetTable}.{$fieldName}");
-                return $this->conn->insert_id;
+            if (!$stmt) {
+                error_log("Failed to prepare statement for pending change: " . $this->conn->error);
+                return false;
             }
             
-            error_log("Failed to add pending change for {$targetTable}.{$fieldName}");
-            return false;
+            // Bind parameters
+            $status = 'pending';
+            $stmt->bind_param('isssss', $adminId, $targetTable, $targetId, $fieldName, $oldValue, $newValue);
+            
+            // Execute statement
+            $result = $stmt->execute();
+            
+            if (!$result) {
+                error_log("Database error while adding pending change for {$targetTable}.{$fieldName}: " . $stmt->error);
+                return false;
+            }
+            
+            // Get the insert ID
+            $insertId = $this->conn->insert_id;
+            
+            if ($insertId) {
+                error_log("Successfully added pending change #{$insertId} for {$targetTable}.{$fieldName}");
+                return $insertId;
+            } else {
+                error_log("Warning: Pending change for {$targetTable}.{$fieldName} was inserted but no ID was returned");
+                return true; // Still return success if no insert ID but execution was successful
+            }
         } catch (Exception $e) {
-            error_log("Exception in addPendingChange: " . $e->getMessage());
-            throw $e;
+            error_log("Exception in addPendingChange for {$targetTable}.{$fieldName}: " . $e->getMessage());
+            return false;
         }
     }
     
@@ -119,17 +130,18 @@ class PendingChanges {
         
         try {
             // Start a transaction
-            $this->db->beginTransaction();
+            $this->conn->begin_transaction();
             
             // Check if the pending change exists and is pending
-            $stmtCheck = $this->db->prepare("SELECT * FROM pending_changes WHERE id = :id AND status = 'pending'");
-            $stmtCheck->bindParam(':id', $changeId, PDO::PARAM_INT);
-            $stmtCheck->execute();
-            $change = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+            $stmt = $this->conn->prepare("SELECT * FROM pending_changes WHERE id = ? AND status = 'pending'");
+            $stmt->bind_param('i', $changeId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $change = $result->fetch_assoc();
             
             if (!$change) {
-                $logger->logError("Failed to approve change: Change ID {$changeId} does not exist or is not pending");
-                $this->db->rollBack();
+                error_log("Failed to approve change: Change ID {$changeId} does not exist or is not pending");
+                $this->conn->rollback();
                 return false;
             }
             
@@ -137,53 +149,50 @@ class PendingChanges {
             $applied = $this->applyChange($change);
             
             if (!$applied) {
-                $logger->logError("Failed to apply change ID {$changeId}");
-                $this->db->rollBack();
+                error_log("Failed to apply change ID {$changeId}");
+                $this->conn->rollback();
                 return false;
             }
             
             // Update the pending change status to approved
             $reviewedAt = date('Y-m-d H:i:s');
-            $updateStmt = $this->db->prepare("
+            $updateStmt = $this->conn->prepare("
                 UPDATE pending_changes 
                 SET status = 'approved', 
-                    reviewer_id = :reviewer_id, 
-                    reviewed_at = :reviewed_at, 
-                    review_comments = :comments 
-                WHERE id = :id
+                    reviewer_id = ?,
+                    reviewed_at = ?,
+                    review_comments = ? 
+                WHERE id = ?
             ");
             
-            $updateStmt->bindParam(':reviewer_id', $reviewerId, PDO::PARAM_INT);
-            $updateStmt->bindParam(':reviewed_at', $reviewedAt, PDO::PARAM_STR);
-            $updateStmt->bindParam(':comments', $comments, PDO::PARAM_STR);
-            $updateStmt->bindParam(':id', $changeId, PDO::PARAM_INT);
-            
+            $updateStmt->bind_param('issi', $reviewerId, $reviewedAt, $comments, $changeId);
             $result = $updateStmt->execute();
             
             if (!$result) {
-                $logger->logError("Failed to update pending change status for change #{$changeId}");
-                $this->db->rollBack();
+                error_log("Failed to update pending change status for change #{$changeId}: " . $updateStmt->error);
+                $this->conn->rollback();
                 return false;
             }
             
             // Log the approval
-            $logger->logAction(
-                $reviewerId, 
-                'pending_change', 
-                "Approved change request #{$changeId}: {$change['target_table']}.{$change['field_name']} for {$change['target_id']}"
-            );
+            if (isset($logger) && method_exists($logger, 'logAction')) {
+                $logger->logAction(
+                    $reviewerId, 
+                    'pending_change', 
+                    "Approved change request #{$changeId}: {$change['target_table']}.{$change['field_name']} for {$change['target_id']}"
+                );
+            } else {
+                error_log("Successfully approved change #{$changeId}");
+            }
             
             // Commit the transaction
-            $this->db->commit();
+            $this->conn->commit();
             return true;
             
-        } catch (PDOException $e) {
-            $this->db->rollBack();
-            $logger->logError("Database error in approveChange: " . $e->getMessage());
-            return false;
         } catch (Exception $e) {
-            $this->db->rollBack();
-            $logger->logError("Error in approveChange: " . $e->getMessage());
+            // Rollback transaction on error
+            $this->conn->rollback();
+            error_log("Error in approveChange: " . $e->getMessage());
             return false;
         }
     }
@@ -198,22 +207,34 @@ class PendingChanges {
      */
     public function rejectChange($id, $reviewerId, $comments = '') {
         try {
-            $query = "UPDATE pending_changes SET 
-                      status = 'rejected', 
-                      reviewer_id = ?, 
-                      reviewed_at = NOW(), 
-                      review_comments = ? 
-                      WHERE id = ? AND status = 'pending'";
+            // Check if the pending change exists and is pending
+            $stmt = $this->conn->prepare("SELECT * FROM pending_changes WHERE id = ? AND status = 'pending'");
+            $stmt->bind_param('i', $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $change = $result->fetch_assoc();
             
-            $params = [
-                $reviewerId,
-                $comments,
-                $id
-            ];
+            if (!$change) {
+                error_log("Failed to reject change: Change ID {$id} does not exist or is not pending");
+                return false;
+            }
             
-            $result = $this->db->query($query, $params);
+            // Update the pending change status to rejected
+            $reviewedAt = date('Y-m-d H:i:s');
+            $updateStmt = $this->conn->prepare("
+                UPDATE pending_changes SET 
+                status = 'rejected', 
+                reviewer_id = ?, 
+                reviewed_at = ?, 
+                review_comments = ? 
+                WHERE id = ? AND status = 'pending'
+            ");
+            
+            $updateStmt->bind_param('issi', $reviewerId, $reviewedAt, $comments, $id);
+            $result = $updateStmt->execute();
+            
             if (!$result) {
-                error_log("Failed to reject change #{$id}");
+                error_log("Failed to reject change #{$id}: " . $updateStmt->error);
                 return false;
             }
             
@@ -221,7 +242,7 @@ class PendingChanges {
             return true;
         } catch (Exception $e) {
             error_log("Exception in rejectChange: " . $e->getMessage());
-            throw $e;
+            return false;
         }
     }
     
