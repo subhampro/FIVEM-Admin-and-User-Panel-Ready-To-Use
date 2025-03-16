@@ -72,6 +72,100 @@ ensurePendingChangesTable();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
+    <style>
+        /* Dark theme optimizations */
+        .card {
+            background-color: #212529;
+            color: #e9ecef;
+            border-color: #2a2e32;
+        }
+        
+        .card-header {
+            background-color: #2a2e32;
+            border-color: #212529;
+        }
+        
+        .text-xs {
+            font-size: 0.75rem;
+        }
+        
+        .font-weight-bold {
+            font-weight: 600;
+        }
+        
+        .text-gray-300 {
+            color: #adb5bd !important;
+        }
+        
+        .text-primary {
+            color: #0d6efd !important;
+        }
+        
+        .text-success {
+            color: #198754 !important;
+        }
+        
+        .text-info {
+            color: #0dcaf0 !important;
+        }
+        
+        .text-warning {
+            color: #ffc107 !important;
+        }
+        
+        .border-left-primary {
+            border-left: 4px solid #0d6efd;
+        }
+        
+        .border-left-success {
+            border-left: 4px solid #198754;
+        }
+        
+        .border-left-info {
+            border-left: 4px solid #0dcaf0;
+        }
+        
+        .border-left-warning {
+            border-left: 4px solid #ffc107;
+        }
+        
+        .table {
+            color: #e9ecef;
+        }
+        
+        .alert-info {
+            color: #e9ecef;
+            background-color: #2a4059;
+            border-color: #1e5f8e;
+        }
+        
+        /* Fix for dropdown menu */
+        .dropdown-menu {
+            background-color: #212529;
+            border-color: #2a2e32;
+        }
+        
+        .dropdown-item {
+            color: #e9ecef;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #2a2e32;
+            color: #e9ecef;
+        }
+        
+        /* Fix for form controls */
+        .form-select, .form-control {
+            background-color: #2a2e32;
+            color: #e9ecef;
+            border-color: #495057;
+        }
+        
+        .form-select option {
+            background-color: #212529;
+            color: #e9ecef;
+        }
+    </style>
 </head>
 <body class="admin-panel">
 

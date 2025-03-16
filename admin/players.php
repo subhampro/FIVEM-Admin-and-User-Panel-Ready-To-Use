@@ -194,6 +194,7 @@ $pageTitle = 'Player Management - Admin Dashboard';
         
         .table td, .table th {
             border-color: #212529;
+            background-color: #2a2e32 !important; /* Force background color for table cells */
         }
         
         /* Make sure all text is readable */
@@ -211,6 +212,93 @@ $pageTitle = 'Player Management - Admin Dashboard';
         .card-header {
             background-color: #2a2e32;
             border-color: #212529;
+        }
+        
+        /* Fix for form select dropdown */
+        .form-select {
+            background-color: #2a2e32;
+            color: #e9ecef;
+            border-color: #495057;
+        }
+        
+        .form-select option {
+            background-color: #212529;
+            color: #e9ecef;
+        }
+        
+        /* Fix for input fields */
+        .form-control {
+            background-color: #2a2e32;
+            color: #e9ecef;
+            border-color: #495057;
+        }
+        
+        .form-control:focus {
+            background-color: #2a2e32;
+            color: #e9ecef;
+        }
+        
+        /* Fix background colors for alerts */
+        .alert-info {
+            color: #e9ecef;
+            background-color: #2a4059;
+            border-color: #1e5f8e;
+        }
+        
+        .alert-warning {
+            color: #e9ecef;
+            background-color: #584c2a;
+            border-color: #8e771e;
+        }
+        
+        .alert-danger {
+            color: #e9ecef;
+            background-color: #592a2a;
+            border-color: #8e1e1e;
+        }
+        
+        /* Dropdown menu styling */
+        .dropdown-menu {
+            background-color: #212529;
+            color: #e9ecef;
+            border-color: #2a2e32;
+        }
+        
+        .dropdown-item {
+            color: #e9ecef;
+        }
+        
+        .dropdown-item:hover {
+            background-color: #2a2e32;
+            color: #e9ecef;
+        }
+        
+        /* Fix table and detailed view backgrounds */
+        .table-bordered {
+            border-color: #2a2e32;
+        }
+        
+        .table-bordered th,
+        .table-bordered td {
+            border-color: #2a2e32;
+            color: #e9ecef;
+            background-color: #212529 !important;
+        }
+        
+        /* Fix for character information specific issues */
+        #basic .table-bordered th,
+        #basic .table-bordered td,
+        #finance .table-bordered th,
+        #finance .table-bordered td,
+        #inventory .table-bordered th,
+        #inventory .table-bordered td,
+        #vehicles .table-bordered th,
+        #vehicles .table-bordered td,
+        #metadata .table-bordered th,
+        #metadata .table-bordered td {
+            background-color: #212529 !important;
+            color: #e9ecef !important;
+            border-color: #2a2e32 !important;
         }
     </style>
 </head>

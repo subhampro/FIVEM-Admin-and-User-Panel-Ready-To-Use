@@ -355,5 +355,19 @@ class User {
     public function deleteUser($id) {
         return $this->db->delete('website_users', 'id = ?', [$id]);
     }
+    
+    /**
+     * Update user's last login time
+     * 
+     * @param int $id User ID
+     * @return int|false Number of affected rows or false on failure
+     */
+    public function updateLastLogin($id) {
+        return $this->db->update('website_users', 
+            ['last_login' => date('Y-m-d H:i:s')], 
+            'id = ?', 
+            [$id]
+        );
+    }
 }
 ?> 

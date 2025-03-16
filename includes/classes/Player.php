@@ -140,13 +140,16 @@ class Player {
                     $types .= "s";
                     break;
                 case 'steam':
-                    $query = "SELECT * FROM players WHERE steam LIKE ? OR identifier LIKE ?";
+                    $query = "SELECT * FROM players WHERE 
+                             steam LIKE ? OR 
+                             identifier LIKE ?";
                     $params[] = $searchTerm;
                     $params[] = $searchTerm;
                     $types .= "ss";
                     break;
                 case 'all':
                 default:
+                    // Fix for all fields search - use JSON_EXTRACT for proper JSON field searching
                     $query = "SELECT * FROM players WHERE 
                              citizenid LIKE ? OR 
                              license LIKE ? OR 
@@ -154,15 +157,18 @@ class Player {
                              JSON_EXTRACT(charinfo, '$.firstname') LIKE ? OR 
                              JSON_EXTRACT(charinfo, '$.lastname') LIKE ? OR 
                              JSON_EXTRACT(charinfo, '$.phone') LIKE ? OR
-                             steam LIKE ? OR 
+                             steam LIKE ? OR  
                              identifier LIKE ?";
                     $params = array_fill(0, 8, $searchTerm);
-                    $types .= str_repeat("s", 8);
+                    $types = str_repeat("s", 8);
                     break;
             }
             
             // Add limit to prevent too many results
             $query .= " LIMIT 50";
+            
+            // Debug log the query
+            error_log("Search query: $query with term: $searchTerm");
             
             // Prepare and execute statement
             $stmt = $this->gameDb->prepare($query);
