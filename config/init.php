@@ -94,7 +94,7 @@ function ensureAdminDatabaseTables() {
     $query = "SHOW TABLES LIKE 'pending_changes'";
     $result = $db->query($query);
     
-    if (!$result || $result->rowCount() === 0) {
+    if (!$result || $result->num_rows === 0) {
         // Create the pending_changes table
         $createTableQuery = "
         CREATE TABLE IF NOT EXISTS `pending_changes` (
@@ -123,7 +123,7 @@ function ensureAdminDatabaseTables() {
     $query = "SHOW COLUMNS FROM `website_users` LIKE 'is_admin'";
     $result = $db->query($query);
     
-    if (!$result || $result->rowCount() === 0) {
+    if (!$result || $result->num_rows === 0) {
         // Add is_admin field if it doesn't exist
         $addFieldQuery = "ALTER TABLE `website_users` ADD COLUMN `is_admin` tinyint(1) NOT NULL DEFAULT 0 AFTER `player_id`";
         $db->query($addFieldQuery);

@@ -57,20 +57,20 @@ CREATE TABLE IF NOT EXISTS `action_logs` (
 -- Table for changes pending approval by admins
 CREATE TABLE IF NOT EXISTS `pending_changes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `change_type` varchar(50) NOT NULL,
-  `current_data` text DEFAULT NULL,
-  `new_data` text DEFAULT NULL,
+  `admin_id` int(11) NOT NULL,
+  `target_table` varchar(50) NOT NULL,
+  `target_id` varchar(50) NOT NULL,
+  `field_name` varchar(50) NOT NULL,
+  `old_value` text DEFAULT NULL,
+  `new_value` text DEFAULT NULL,
   `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `reviewer_id` int(11) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `comments` text DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `reviewed_at` datetime DEFAULT NULL,
+  `review_comments` text DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `reviewer_id` (`reviewer_id`),
-  CONSTRAINT `fk_pending_changes_user` FOREIGN KEY (`user_id`) REFERENCES `website_users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `fk_pending_changes_reviewer` FOREIGN KEY (`reviewer_id`) REFERENCES `website_users` (`id`) ON DELETE SET NULL
+  KEY `admin_id` (`admin_id`),
+  KEY `reviewer_id` (`reviewer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table for website settings
@@ -98,6 +98,19 @@ CREATE TABLE IF NOT EXISTS `api_tokens` (
   UNIQUE KEY `token` (`token`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `fk_api_tokens_website_users` FOREIGN KEY (`user_id`) REFERENCES `website_users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Create table for remember me tokens
+CREATE TABLE IF NOT EXISTS `remember_tokens` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `token` varchar(255) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `token` (`token`),
+  KEY `user_id` (`user_id`),
+  CONSTRAINT `fk_remember_tokens_website_users` FOREIGN KEY (`user_id`) REFERENCES `website_users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Insert default website settings

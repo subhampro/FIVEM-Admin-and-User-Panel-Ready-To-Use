@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 $users = $userObj->getAllUsers();
 
 // Page title
-$pageTitle = 'Manage Users - ' . getSetting('site_name', 'FiveM Server Dashboard');
+$pageTitle = 'Manage Users - Admin Dashboard';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -159,6 +159,7 @@ $pageTitle = 'Manage Users - ' . getSetting('site_name', 'FiveM Server Dashboard
     <title><?php echo $pageTitle; ?></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
     <style>
         body {
@@ -316,7 +317,7 @@ $pageTitle = 'Manage Users - ' . getSetting('site_name', 'FiveM Server Dashboard
         }
     </style>
 </head>
-<body>
+<body class="admin-panel">
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->

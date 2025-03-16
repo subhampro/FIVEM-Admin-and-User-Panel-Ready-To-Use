@@ -29,7 +29,7 @@ function ensurePendingChangesTable() {
     $query = "SHOW TABLES LIKE 'pending_changes'";
     $result = $db->query($query);
     
-    if (!$result || $result->rowCount() === 0) {
+    if (!$result || $result->num_rows === 0) {
         // Table doesn't exist, create it
         $createTableQuery = "
         CREATE TABLE IF NOT EXISTS `pending_changes` (
@@ -62,8 +62,21 @@ function ensurePendingChangesTable() {
 ensurePendingChangesTable();
 
 // Include header
-include_once '../includes/header.php';
+// include_once '../includes/header.php';
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $pageTitle; ?></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="admin-panel">
 
 <div class="container mt-4">
     <h1>Admin Panel</h1>
@@ -132,7 +145,7 @@ include_once '../includes/header.php';
     </div>
     
     <!-- Quick Actions -->
-    <div class="card mt-4">
+    <div class="card mt-4 quick-actions">
         <div class="card-header">
             <h5 class="mb-0">Quick Actions</h5>
         </div>
@@ -163,7 +176,7 @@ include_once '../includes/header.php';
     </div>
     
     <!-- System Status -->
-    <div class="card mt-4">
+    <div class="card mt-4 system-status">
         <div class="card-header">
             <h5 class="mb-0">System Status</h5>
         </div>
@@ -239,7 +252,13 @@ include_once '../includes/header.php';
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
+
 <?php
-// Include footer
-include_once '../includes/footer.php';
+// Include footer - we're using our own for dark mode fix
+// include_once '../includes/footer.php';
 ?> 

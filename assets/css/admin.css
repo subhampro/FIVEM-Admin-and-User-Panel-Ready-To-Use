@@ -24,6 +24,52 @@ span, li, label, .form-label {
     color: var(--dark-text) !important;
 }
 
+/* Fix list group items in admin panel */
+.list-group-item {
+    background-color: var(--dark-input-bg) !important;
+    color: var(--dark-text) !important;
+    border-color: var(--dark-border) !important;
+}
+
+.list-group-item a {
+    color: var(--dark-text) !important;
+    text-decoration: none;
+}
+
+.list-group-item a:hover {
+    color: var(--accent-color) !important;
+    text-decoration: underline;
+}
+
+/* Fix card backgrounds in admin panel */
+.card {
+    background-color: var(--dark-card-bg) !important;
+    border-color: var(--dark-border) !important;
+}
+
+.card-header {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    border-bottom-color: var(--dark-border) !important;
+}
+
+.card-footer {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    border-top-color: var(--dark-border) !important;
+}
+
+/* Fix table styles for admin panel */
+.table {
+    color: var(--dark-text) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
 /* Admin sidebar */
 .sidebar {
     background-color: var(--dark-card-bg);
@@ -345,4 +391,144 @@ span, li, label, .form-label {
     .stats-card .stats-label {
         font-size: 0.8rem;
     }
+}
+
+/* Fix System Status section */
+.system-status .card {
+    background-color: var(--dark-card-bg) !important;
+    color: var(--dark-text) !important;
+}
+
+.system-status h6 {
+    color: var(--dark-text) !important;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.system-status .list-group-item {
+    background-color: var(--dark-input-bg) !important;
+    color: var(--dark-text) !important;
+    border-color: var(--dark-border) !important;
+}
+
+/* Fix badge colors in System Status */
+.badge.bg-success {
+    background-color: var(--success-color) !important;
+    color: white !important;
+}
+
+.badge.bg-danger {
+    background-color: var(--danger-color) !important;
+    color: white !important;
+}
+
+.badge.bg-warning {
+    background-color: var(--warning-color) !important;
+    color: white !important;
+}
+
+.badge.bg-info {
+    background-color: var(--info-color) !important;
+    color: white !important;
+}
+
+/* Quick Actions section */
+.quick-actions .btn {
+    margin-bottom: 10px;
+    text-align: left;
+    font-weight: 500;
+}
+
+.quick-actions .btn i {
+    margin-right: 8px;
+}
+
+/* Fix management cards in admin panel */
+.col-md-4 .card {
+    background-color: var(--dark-card-bg) !important;
+    border: 1px solid var(--dark-border) !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2) !important;
+    height: 100% !important;
+}
+
+.col-md-4 .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.col-md-4 .card-header {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    border-bottom: 1px solid var(--dark-border) !important;
+    padding: 1rem 1.25rem !important;
+}
+
+.col-md-4 .card-header h5 {
+    color: var(--dark-text) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0 !important;
+}
+
+.col-md-4 .card-body {
+    background-color: var(--dark-card-bg) !important;
+    color: var(--dark-text) !important;
+    padding: 1.25rem !important;
+}
+
+.col-md-4 .card-body p {
+    color: var(--dark-text-secondary) !important;
+    margin-bottom: 1rem !important;
+}
+
+.col-md-4 .list-group-item {
+    background-color: var(--dark-input-bg) !important;
+    border-color: var(--dark-border) !important;
+    padding: 0.75rem 1.25rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.col-md-4 .list-group-item:hover {
+    background-color: var(--dark-hover) !important;
+}
+
+.col-md-4 .list-group-item a {
+    color: var(--dark-text) !important;
+    display: block !important;
+    text-decoration: none !important;
+}
+
+.col-md-4 .card-footer {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+    border-top: 1px solid var(--dark-border) !important;
+    padding: 0.75rem 1.25rem !important;
+}
+
+/* Override any Bootstrap styles that might be causing issues */
+.btn-primary {
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover) !important;
+    border-color: var(--accent-hover) !important;
+}
+
+.btn-success {
+    background-color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+}
+
+.btn-warning {
+    background-color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
+}
+
+.btn-danger {
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+}
+
+.btn-info {
+    background-color: var(--info-color) !important;
+    border-color: var(--info-color) !important;
 } 

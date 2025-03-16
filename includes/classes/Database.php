@@ -131,13 +131,11 @@ class Database {
     public function getSingle($query, $params = []) {
         $stmt = $this->query($query, $params);
         
-        if ($stmt) {
-            $result = $stmt->fetch_assoc();
-            $stmt->close();
-            return $result;
+        if (!$stmt) {
+            return false;
         }
         
-        return false;
+        return $stmt->fetch_assoc();
     }
     
     /**
@@ -150,13 +148,16 @@ class Database {
     public function getAll($query, $params = []) {
         $stmt = $this->query($query, $params);
         
-        if ($stmt) {
-            $results = $stmt->fetch_all(MYSQLI_ASSOC);
-            $stmt->close();
-            return $results;
+        if (!$stmt) {
+            return false;
         }
         
-        return false;
+        $results = [];
+        while ($row = $stmt->fetch_assoc()) {
+            $results[] = $row;
+        }
+        
+        return $results;
     }
     
     /**
