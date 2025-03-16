@@ -180,9 +180,12 @@ $pageTitle = 'Player Details - ' . getSetting('site_name', 'FiveM Server Dashboa
         .profile-image {
             width: 120px;
             height: 120px;
-            object-fit: cover;
+            object-fit: contain;
             border-radius: 50%;
             border: 3px solid #4f46e5;
+            background-color: rgba(30, 30, 46, 0.8);
+            padding: 3px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .character-info {
             margin-left: 2rem;
@@ -448,7 +451,7 @@ $pageTitle = 'Player Details - ' . getSetting('site_name', 'FiveM Server Dashboa
                     </div>
                     <div class="card-body">
                         <div class="d-flex flex-column flex-md-row align-items-center">
-                            <img src="../assets/img/avatar-placeholder.jpg" alt="Character Avatar" class="profile-image">
+                            <img src="https://i.imgur.com/4H2c5AB.gif" alt="Character Avatar" class="profile-image">
                             <div class="character-info mt-3 mt-md-0">
                                 <h2><?php echo ($charInfo && isset($charInfo['firstname'])) ? $charInfo['firstname'] . ' ' . $charInfo['lastname'] : 'Unknown Character'; ?></h2>
                                 <p><strong>Citizen ID:</strong> <?php echo $citizenid ?? 'Unknown'; ?></p>
