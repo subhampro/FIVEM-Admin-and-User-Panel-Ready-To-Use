@@ -34,6 +34,23 @@ function getBaseUrl() {
 
 // Get base URL once for all links
 $baseUrl = getBaseUrl();
+
+$userRoleClasses = [
+    'user' => '',
+    'admin_level1' => 'admin-level-1',
+    'admin_level2' => 'admin-level-2',
+    'admin_level3' => 'admin-level-3'
+];
+
+// Check if user is logged in and has a role
+$bodyClass = '';
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+    // Make sure the role exists and is valid
+    $userRole = isset($_SESSION['role']) ? $_SESSION['role'] : 'user';
+    if (array_key_exists($userRole, $userRoleClasses)) {
+        $bodyClass = $userRoleClasses[$userRole];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -286,7 +303,7 @@ $baseUrl = getBaseUrl();
         }
     </style>
 </head>
-<body>
+<body class="<?php echo $bodyClass; ?>">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">

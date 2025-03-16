@@ -85,8 +85,17 @@ if (!in_array($status, ['pending', 'approved', 'rejected'])) {
     $status = 'pending';
 }
 
-// Get the changes for current status
-$changes = $pendingChanges->getPendingChanges($status);
+// Pagination settings
+$limit = 20; // Show 20 items per page
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
+
+// Get total count for pagination
+$totalCount = $pendingChanges->countPendingChanges($status);
+$totalPages = ceil($totalCount / $limit);
+
+// Get the changes for current status with pagination
+$changes = $pendingChanges->getPendingChanges($status, $limit, $offset);
 
 // Count stats
 $pendingCount = $pendingChanges->countPendingChanges('pending');
@@ -250,25 +259,31 @@ include_once '../includes/header.php';
                     <a class="nav-link <?php echo $status === 'pending' ? 'active' : ''; ?>" href="?status=pending">
                         <i class="fas fa-clock me-1"></i> Pending
                         <?php if ($pendingCount > 0): ?>
-                        <span class="badge bg-light text-dark"><?php echo $pendingCount; ?></span>
+                        <span class="badge bg-warning text-dark"><?php echo $pendingCount; ?></span>
                         <?php endif; ?>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo $status === 'approved' ? 'active' : ''; ?>" href="?status=approved">
                         <i class="fas fa-check-circle me-1"></i> Approved
+                        <?php if ($approvedCount > 0): ?>
+                        <span class="badge bg-success text-light"><?php echo $approvedCount; ?></span>
+                        <?php endif; ?>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link <?php echo $status === 'rejected' ? 'active' : ''; ?>" href="?status=rejected">
                         <i class="fas fa-times-circle me-1"></i> Rejected
+                        <?php if ($rejectedCount > 0): ?>
+                        <span class="badge bg-danger text-light"><?php echo $rejectedCount; ?></span>
+                        <?php endif; ?>
                     </a>
                 </li>
             </ul>
             
             <!-- Changes Table -->
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header bg-dark text-light">
                     <h5 class="mb-0">
                         <?php if ($status === 'pending'): ?>
                             <i class="fas fa-clock me-1"></i> Pending Changes
@@ -277,16 +292,17 @@ include_once '../includes/header.php';
                         <?php else: ?>
                             <i class="fas fa-times-circle me-1"></i> Rejected Changes
                         <?php endif; ?>
+                        <span class="badge bg-secondary ms-2"><?php echo $totalCount; ?> total</span>
                     </h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body bg-dark text-light">
                     <?php if (empty($changes)): ?>
-                        <div class="alert alert-info">
+                        <div class="alert alert-info bg-info bg-opacity-25 text-info">
                             <i class="fas fa-info-circle me-1"></i> No <?php echo $status; ?> changes found.
                         </div>
                     <?php else: ?>
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover table-dark">
                                 <thead>
                                     <tr>
                                         <th width="5%">ID</th>
@@ -310,11 +326,11 @@ include_once '../includes/header.php';
                                             <td><?php echo date('Y-m-d H:i', strtotime($change['created_at'])); ?></td>
                                             <td>
                                                 <?php if ($change['status'] === 'pending'): ?>
-                                                    <span class="badge pending-badge">Pending</span>
+                                                    <span class="badge bg-warning text-dark">Pending</span>
                                                 <?php elseif ($change['status'] === 'approved'): ?>
-                                                    <span class="badge approved-badge">Approved</span>
+                                                    <span class="badge bg-success">Approved</span>
                                                 <?php else: ?>
-                                                    <span class="badge rejected-badge">Rejected</span>
+                                                    <span class="badge bg-danger">Rejected</span>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
@@ -348,6 +364,72 @@ include_once '../includes/header.php';
                                 </tbody>
                             </table>
                         </div>
+                        
+                        <!-- Pagination -->
+                        <?php if ($totalPages > 1): ?>
+                        <nav aria-label="Page navigation" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <?php if ($page > 1): ?>
+                                <li class="page-item">
+                                    <a class="page-link bg-dark text-light" href="?status=<?php echo $status; ?>&page=<?php echo ($page - 1); ?>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <?php else: ?>
+                                <li class="page-item disabled">
+                                    <a class="page-link bg-dark text-light" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <?php endif; ?>
+                                
+                                <?php
+                                // Show a range of pages around the current page
+                                $startPage = max(1, $page - 2);
+                                $endPage = min($totalPages, $page + 2);
+                                
+                                // Always show the first page
+                                if ($startPage > 1) {
+                                    echo '<li class="page-item"><a class="page-link bg-dark text-light" href="?status=' . $status . '&page=1">1</a></li>';
+                                    if ($startPage > 2) {
+                                        echo '<li class="page-item disabled"><a class="page-link bg-dark text-light" href="#">...</a></li>';
+                                    }
+                                }
+                                
+                                // Show the range of pages
+                                for ($i = $startPage; $i <= $endPage; $i++) {
+                                    if ($i == $page) {
+                                        echo '<li class="page-item active"><a class="page-link" href="#">' . $i . '</a></li>';
+                                    } else {
+                                        echo '<li class="page-item"><a class="page-link bg-dark text-light" href="?status=' . $status . '&page=' . $i . '">' . $i . '</a></li>';
+                                    }
+                                }
+                                
+                                // Always show the last page
+                                if ($endPage < $totalPages) {
+                                    if ($endPage < $totalPages - 1) {
+                                        echo '<li class="page-item disabled"><a class="page-link bg-dark text-light" href="#">...</a></li>';
+                                    }
+                                    echo '<li class="page-item"><a class="page-link bg-dark text-light" href="?status=' . $status . '&page=' . $totalPages . '">' . $totalPages . '</a></li>';
+                                }
+                                ?>
+                                
+                                <?php if ($page < $totalPages): ?>
+                                <li class="page-item">
+                                    <a class="page-link bg-dark text-light" href="?status=<?php echo $status; ?>&page=<?php echo ($page + 1); ?>" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <?php else: ?>
+                                <li class="page-item disabled">
+                                    <a class="page-link bg-dark text-light" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                <?php endif; ?>
+                            </ul>
+                        </nav>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </div>
             </div>
@@ -358,16 +440,16 @@ include_once '../includes/header.php';
 <!-- View Change Modal -->
 <div class="modal fade" id="viewChangeModal" tabindex="-1" aria-labelledby="viewChangeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-secondary">
                 <h5 class="modal-title" id="viewChangeModalLabel">Change Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <h6>Basic Information</h6>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-dark border-secondary">
                             <tr>
                                 <th>ID</th>
                                 <td id="viewId"></td>
@@ -400,7 +482,7 @@ include_once '../includes/header.php';
                     </div>
                     <div class="col-md-6">
                         <h6>Review Information</h6>
-                        <table class="table table-bordered">
+                        <table class="table table-bordered table-dark border-secondary">
                             <tr>
                                 <th>Reviewer</th>
                                 <td id="viewReviewer"></td>
@@ -420,15 +502,15 @@ include_once '../includes/header.php';
                 <div class="row">
                     <div class="col-md-6">
                         <h6>Old Value</h6>
-                        <pre id="viewOldValue" class="mb-0"></pre>
+                        <pre id="viewOldValue" class="mb-0 bg-dark text-light p-2 border border-secondary rounded"></pre>
                     </div>
                     <div class="col-md-6">
                         <h6>New Value</h6>
-                        <pre id="viewNewValue" class="mb-0"></pre>
+                        <pre id="viewNewValue" class="mb-0 bg-dark text-light p-2 border border-secondary rounded"></pre>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer border-secondary">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -438,15 +520,15 @@ include_once '../includes/header.php';
 <!-- Approve Modal -->
 <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-secondary">
                 <h5 class="modal-title" id="approveModalLabel">Approve Change</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="post" action="">
                 <div class="modal-body">
                     <p>Are you sure you want to approve this change? This will apply the change to the database.</p>
-                    <div class="alert alert-info">
+                    <div class="alert alert-info bg-info bg-opacity-25 text-info">
                         <i class="fas fa-info-circle me-2"></i> Approving this change will immediately update the game database with the new value.
                     </div>
                     <input type="hidden" name="action" value="approve">
@@ -454,10 +536,10 @@ include_once '../includes/header.php';
                     
                     <div class="mb-3">
                         <label for="approveComments" class="form-label">Comments (Optional)</label>
-                        <textarea class="form-control" id="approveComments" name="comments" rows="3"></textarea>
+                        <textarea class="form-control bg-dark text-light border-secondary" id="approveComments" name="comments" rows="3"></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-success">Approve</button>
                 </div>
@@ -469,15 +551,15 @@ include_once '../includes/header.php';
 <!-- Reject Modal -->
 <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content bg-dark text-light">
+            <div class="modal-header border-secondary">
                 <h5 class="modal-title" id="rejectModalLabel">Reject Change</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="post" action="">
                 <div class="modal-body">
                     <p>Are you sure you want to reject this change?</p>
-                    <div class="alert alert-warning">
+                    <div class="alert alert-warning bg-warning bg-opacity-25 text-warning">
                         <i class="fas fa-exclamation-triangle me-2"></i> Rejecting this change will permanently cancel it. The change will not be applied to the database.
                     </div>
                     <input type="hidden" name="action" value="reject">
@@ -485,10 +567,10 @@ include_once '../includes/header.php';
                     
                     <div class="mb-3">
                         <label for="rejectComments" class="form-label">Reason for Rejection</label>
-                        <textarea class="form-control" id="rejectComments" name="comments" rows="3" required></textarea>
+                        <textarea class="form-control bg-dark text-light border-secondary" id="rejectComments" name="comments" rows="3" required></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-danger">Reject</button>
                 </div>

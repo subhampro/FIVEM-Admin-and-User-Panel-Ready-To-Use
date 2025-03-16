@@ -6,6 +6,9 @@ define('DB_PASSWORD', 'ddoserrandihain');
 define('DB_NAME', 'elapsed2_0');
 define('DB_CHARSET', 'utf8mb4');
 
+// Game database configuration
+define('GAME_DB_NAME', 'elapsed2_0'); // Database name for the game server
+
 // Website configuration
 define('SITE_URL', 'http://localhost');  // Change to your actual domain in production
 define('SITE_NAME', 'FiveM Server Dashboard');

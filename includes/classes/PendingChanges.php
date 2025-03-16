@@ -229,13 +229,15 @@ class PendingChanges {
             // Handle different tables
             switch ($targetTable) {
                 case 'players':
-                    // Connect to game database
-                    $gameDb = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, 'elapsed2_0');
+                    // Connect to game database - Use the correct database name from config
+                    $gameDbName = defined('GAME_DB_NAME') ? GAME_DB_NAME : 'elapsed2_0';
+                    $gameDb = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, $gameDbName);
+                    
                     if ($gameDb->connect_error) {
                         throw new Exception("Failed to connect to game database: " . $gameDb->connect_error);
                     }
                     
-                    error_log("Connected to game database for applying change");
+                    error_log("Connected to game database {$gameDbName} for applying change");
                     
                     // Different handling for different fields
                     if ($subField) {
@@ -248,7 +250,10 @@ class PendingChanges {
                         }
                         
                         $stmt->bind_param('s', $targetId);
-                        $stmt->execute();
+                        if (!$stmt->execute()) {
+                            throw new Exception("Failed to execute query: " . $stmt->error);
+                        }
+                        
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
                         
@@ -261,8 +266,22 @@ class PendingChanges {
                         // Parse the JSON data
                         $jsonData = json_decode($row[$mainField], true);
                         if (!$jsonData && $row[$mainField]) {
-                            $jsonData = $row[$mainField]; // Handle non-JSON data or invalid JSON
-                            error_log("Warning: Field {$mainField} is not valid JSON, treating as raw data");
+                            // Try to handle different formats
+                            if ($mainField === 'money' || $mainField === 'job' || $mainField === 'charinfo') {
+                                // For these fields, ensure we have a proper array even if stored differently
+                                try {
+                                    $jsonData = is_array($row[$mainField]) ? $row[$mainField] : json_decode($row[$mainField], true);
+                                    if (!is_array($jsonData)) {
+                                        $jsonData = array();
+                                    }
+                                } catch (Exception $e) {
+                                    error_log("Exception parsing JSON data: " . $e->getMessage());
+                                    $jsonData = array();
+                                }
+                            } else {
+                                $jsonData = $row[$mainField]; // Handle non-JSON data or invalid JSON
+                                error_log("Warning: Field {$mainField} is not valid JSON, treating as raw data");
+                            }
                         }
                         
                         // Update the subfield
@@ -285,12 +304,17 @@ class PendingChanges {
                                 throw new Exception("Failed to update JSON field: " . $stmt->error);
                             }
                             
+                            // Check affected rows
+                            if ($gameDb->affected_rows <= 0) {
+                                error_log("Warning: No rows affected when updating {$mainField}.{$subField}");
+                            }
+                            
                             error_log("Successfully updated JSON field {$mainField}.{$subField}");
                         } else {
                             // Special handling for money field which is stored as a string in DB but used as JSON in PHP
                             if ($mainField === 'money') {
                                 // Assuming money is stored as JSON string
-                                $moneyData = json_decode($row[$mainField], true) ?: [];
+                                $moneyData = is_array($jsonData) ? $jsonData : array();
                                 $moneyData[$subField] = (float)$newValue;
                                 error_log("Updated money subfield {$subField}");
                                 
@@ -306,6 +330,11 @@ class PendingChanges {
                                 
                                 if (!$result) {
                                     throw new Exception("Failed to update money field: " . $stmt->error);
+                                }
+                                
+                                // Check affected rows
+                                if ($gameDb->affected_rows <= 0) {
+                                    error_log("Warning: No rows affected when updating money.{$subField}");
                                 }
                                 
                                 error_log("Successfully updated money field {$mainField}.{$subField}");
@@ -326,6 +355,11 @@ class PendingChanges {
                         
                         if (!$result) {
                             throw new Exception("Failed to update field {$fieldName}: " . $stmt->error);
+                        }
+                        
+                        // Check affected rows
+                        if ($gameDb->affected_rows <= 0) {
+                            error_log("Warning: No rows affected when updating {$fieldName}");
                         }
                         
                         error_log("Successfully updated direct field {$fieldName}");

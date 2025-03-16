@@ -162,6 +162,19 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
             border-color: #1e5f8e;
         }
         
+        .modal-content {
+            background-color: #212529;
+            color: #e9ecef;
+        }
+        
+        .modal-header, .modal-footer {
+            border-color: #2a2e32;
+        }
+        
+        .btn-close {
+            filter: invert(1);
+        }
+        
         .nav-tabs .nav-link {
             color: #e9ecef;
         }
@@ -190,6 +203,29 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
             background-color: #2a2e32;
             color: #e9ecef;
             border-color: #495057;
+        }
+        
+        /* Additional dark theme fixes */
+        .dropdown-menu {
+            background-color: #212529;
+            border-color: #2a2e32;
+        }
+        
+        .dropdown-item {
+            color: #e9ecef;
+        }
+        
+        .dropdown-item:hover, .dropdown-item:focus {
+            background-color: #2a2e32;
+            color: #fff;
+        }
+        
+        pre {
+            background-color: #2a2e32;
+            color: #e9ecef;
+            border: 1px solid #444;
+            border-radius: 0.25rem;
+            padding: 0.5rem;
         }
     </style>
 </head>
@@ -293,10 +329,10 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
             </div>
             
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header bg-dark text-light">
                     <h5 class="mb-0">Available Fields to Edit</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body bg-dark text-light">
                     <ul class="nav nav-tabs" id="editFieldsTab" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="character-tab" data-bs-toggle="tab" data-bs-target="#character" type="button" role="tab" aria-controls="character" aria-selected="true">
@@ -334,7 +370,7 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                         <div class="row g-3 mb-3">
                                             <div class="col-md-6">
                                                 <label for="firstname" class="form-label required">First Name</label>
-                                                <input type="text" class="form-control" id="firstname" name="new_value" value="<?php echo htmlspecialchars($playerDetails['charinfo']['firstname'] ?? ''); ?>" required>
+                                                <input type="text" class="form-control bg-dark text-light border-secondary" id="firstname" name="new_value" value="<?php echo htmlspecialchars($playerDetails['charinfo']['firstname'] ?? ''); ?>" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mt-4">
@@ -355,7 +391,7 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label for="lastname" class="form-label required">Last Name</label>
-                                                <input type="text" class="form-control" id="lastname" name="new_value" value="<?php echo htmlspecialchars($playerDetails['charinfo']['lastname'] ?? ''); ?>" required>
+                                                <input type="text" class="form-control bg-dark text-light border-secondary" id="lastname" name="new_value" value="<?php echo htmlspecialchars($playerDetails['charinfo']['lastname'] ?? ''); ?>" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mt-4">
@@ -382,7 +418,7 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label for="birthdate" class="form-label required">Birth Date (MM/DD/YYYY)</label>
-                                                <input type="text" class="form-control" id="birthdate" name="new_value" value="<?php echo htmlspecialchars($playerDetails['charinfo']['birthdate'] ?? ''); ?>" required placeholder="MM/DD/YYYY">
+                                                <input type="text" class="form-control bg-dark text-light border-secondary" id="birthdate" name="new_value" value="<?php echo htmlspecialchars($playerDetails['charinfo']['birthdate'] ?? ''); ?>" required placeholder="MM/DD/YYYY">
                                                 <div class="form-text text-light">Example: 01/15/1990</div>
                                             </div>
                                             <div class="col-md-6">
@@ -410,7 +446,7 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label for="gender" class="form-label required">Gender</label>
-                                                <select class="form-select" id="gender" name="new_value" required>
+                                                <select class="form-select bg-dark text-light border-secondary" id="gender" name="new_value" required>
                                                     <option value="0" <?php echo (isset($playerDetails['charinfo']['gender']) && $playerDetails['charinfo']['gender'] == 0) ? 'selected' : ''; ?>>Male</option>
                                                     <option value="1" <?php echo (isset($playerDetails['charinfo']['gender']) && $playerDetails['charinfo']['gender'] == 1) ? 'selected' : ''; ?>>Female</option>
                                                 </select>
@@ -440,7 +476,7 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label for="phone" class="form-label required">Phone Number</label>
-                                                <input type="text" class="form-control" id="phone" name="new_value" value="<?php echo htmlspecialchars($playerDetails['charinfo']['phone'] ?? ''); ?>" required>
+                                                <input type="text" class="form-control bg-dark text-light border-secondary" id="phone" name="new_value" value="<?php echo htmlspecialchars($playerDetails['charinfo']['phone'] ?? ''); ?>" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mt-4">
@@ -473,8 +509,8 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                             <div class="col-md-6">
                                                 <label for="cash" class="form-label required">Cash Amount</label>
                                                 <div class="input-group">
-                                                    <span class="input-group-text">$</span>
-                                                    <input type="number" class="form-control" id="cash" name="new_value" value="<?php echo $playerDetails['money']['cash'] ?? 0; ?>" step="0.01" min="0" required>
+                                                    <span class="input-group-text bg-dark text-light border-secondary">$</span>
+                                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="cash" name="new_value" value="<?php echo $playerDetails['money']['cash'] ?? 0; ?>" step="0.01" min="0" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -503,8 +539,8 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                             <div class="col-md-6">
                                                 <label for="bank" class="form-label required">Bank Amount</label>
                                                 <div class="input-group">
-                                                    <span class="input-group-text">$</span>
-                                                    <input type="number" class="form-control" id="bank" name="new_value" value="<?php echo $playerDetails['money']['bank'] ?? 0; ?>" step="0.01" min="0" required>
+                                                    <span class="input-group-text bg-dark text-light border-secondary">$</span>
+                                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="bank" name="new_value" value="<?php echo $playerDetails['money']['bank'] ?? 0; ?>" step="0.01" min="0" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -532,7 +568,7 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label for="crypto" class="form-label required">Crypto Amount</label>
-                                                <input type="number" class="form-control" id="crypto" name="new_value" value="<?php echo $playerDetails['money']['crypto'] ?? 0; ?>" step="0.01" min="0" required>
+                                                <input type="number" class="form-control bg-dark text-light border-secondary" id="crypto" name="new_value" value="<?php echo $playerDetails['money']['crypto'] ?? 0; ?>" step="0.01" min="0" required>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="mt-4">
@@ -562,7 +598,7 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                         <div class="row g-3">
                                             <div class="col-md-6">
                                                 <label for="job_name" class="form-label required">Job Name</label>
-                                                <select class="form-select" id="job_name" name="job_name" required>
+                                                <select class="form-select bg-dark text-light border-secondary" id="job_name" name="job_name" required>
                                                     <option value="unemployed" <?php echo ($playerDetails['job']['name'] ?? '') === 'unemployed' ? 'selected' : ''; ?>>Unemployed</option>
                                                     <option value="police" <?php echo ($playerDetails['job']['name'] ?? '') === 'police' ? 'selected' : ''; ?>>Police</option>
                                                     <option value="ambulance" <?php echo ($playerDetails['job']['name'] ?? '') === 'ambulance' ? 'selected' : ''; ?>>EMS</option>
@@ -575,7 +611,7 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="job_grade" class="form-label required">Job Grade</label>
-                                                <input type="number" class="form-control" id="job_grade" name="job_grade" value="<?php echo $playerDetails['job']['grade']['level'] ?? 0; ?>" min="0" required>
+                                                <input type="number" class="form-control bg-dark text-light border-secondary" id="job_grade" name="job_grade" value="<?php echo $playerDetails['job']['grade']['level'] ?? 0; ?>" min="0" required>
                                             </div>
                                         </div>
                                         
