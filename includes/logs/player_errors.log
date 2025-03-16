@@ -31,3 +31,1570 @@
     [0] => site_name
 )
 
+[16-Mar-2025 12:47:01 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:01 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:01 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:01 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:01 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 12:47:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:03 UTC] Executing query: SELECT * FROM user_characters 
+                WHERE user_id = ? AND is_primary = 1 
+                LIMIT 1 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:03 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:03 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 12:47:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:03 UTC] Executing query: SELECT * FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:03 UTC] Executing query: SELECT * FROM user_characters 
+                WHERE user_id = ? AND is_primary = 1 
+                LIMIT 1 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:03 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:04 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:04 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 12:47:04 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:04 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:04 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:04 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:04 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 12:47:07 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:07 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:07 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:07 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:07 UTC] getUserByCitizenId: Found player in game database with ID: 311071
+[16-Mar-2025 12:47:07 UTC] Executing query: SELECT * FROM website_users WHERE player_id = ? with params: Array
+(
+    [0] => 311071
+)
+
+[16-Mar-2025 12:47:07 UTC] getUserByCitizenId: Found user with player_id: 311071
+[16-Mar-2025 12:47:07 UTC] Executing query: SELECT id FROM user_characters WHERE user_id = ? AND citizenid = ? with params: Array
+(
+    [0] => 3
+    [1] => L18H82ZM
+)
+
+[16-Mar-2025 12:47:07 UTC] Executing query: SELECT COUNT(*) as count FROM user_characters WHERE user_id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:07 UTC] Executing insert query: INSERT INTO user_characters (user_id, citizenid, is_primary) VALUES (?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => L18H82ZM
+    [2] => 1
+)
+
+[16-Mar-2025 12:47:07 UTC] Bound parameters with types: isi
+[16-Mar-2025 12:47:07 UTC] Insert successful. Last ID: 1
+[16-Mar-2025 12:47:07 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:07 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:07 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:07 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 12:47:13 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:13 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:13 UTC] Executing query: SELECT * FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:13 UTC] Executing query: SELECT * FROM user_characters 
+                WHERE user_id = ? AND is_primary = 1 
+                LIMIT 1 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:13 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:13 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:13 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:13 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 12:47:17 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:17 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:17 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:17 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:17 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 12:47:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:20 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 12:47:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 12:47:20 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:02:24 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:02:24 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:02:24 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:02:24 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:02:24 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:02:26 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:02:26 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:02:26 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:02:26 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:02:26 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:37 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:37 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:37 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:38 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:38 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:38 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:39 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:40 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:41 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:42 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:42 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:42 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:42 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:42 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:43 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:43 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:43 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:43 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:43 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:44 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:44 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:44 UTC] Executing query: SELECT * FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:44 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:44 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:44 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:44 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:45 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:45 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:45 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:45 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:45 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:47 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:47 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:47 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:47 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:47 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:10:49 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:14:43 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:43 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:43 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:43 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:43 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT COUNT(*) as count FROM players with params: Array
+(
+)
+
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT COUNT(*) as count FROM website_users with params: Array
+(
+)
+
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT COUNT(*) as count FROM website_users WHERE role != 'user' with params: Array
+(
+)
+
+[16-Mar-2025 13:14:50 UTC] Executing query: 
+            SELECT last_login
+            FROM website_users
+            WHERE role != 'user' AND last_login IS NOT NULL
+            ORDER BY last_login DESC
+            LIMIT 1
+         with params: Array
+(
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT COUNT(*) as count FROM admin_notifications WHERE user_id = ? AND is_read = 0 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SHOW TABLES LIKE 'pending_changes' with params: Array
+(
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:50 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:50 UTC] Executing query: SELECT al.*, wu.username 
+                 FROM action_logs al 
+                 LEFT JOIN website_users wu ON al.user_id = wu.id 
+                 ORDER BY al.timestamp DESC 
+                 LIMIT ? with params: Array
+(
+    [0] => 5
+)
+
+[16-Mar-2025 13:14:53 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:53 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:53 UTC] Executing insert query: INSERT INTO remember_tokens (user_id, token, expires_at, created_at) VALUES (?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => F6W0chgISr9RjRz1pJlatv8AUPjoTB4iM08B9F7xUIw82lvxLR5KadYZ6Nwx0J4K
+    [2] => 2025-04-15 13:14:53
+    [3] => 2025-03-16 13:14:53
+)
+
+[16-Mar-2025 13:14:53 UTC] Bound parameters with types: isss
+[16-Mar-2025 13:14:53 UTC] Insert successful. Last ID: 18
+[16-Mar-2025 13:14:53 UTC] Executing update query: UPDATE website_users SET last_login = ? WHERE id = ? with data: Array
+(
+    [0] => 2025-03-16 13:14:53
+    [1] => 3
+)
+
+[16-Mar-2025 13:14:53 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:53 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => login
+    [2] => User logged in successfully
+    [3] => ::1
+    [4] => 2025-03-16 13:14:53
+)
+
+[16-Mar-2025 13:14:53 UTC] Bound parameters with types: issss
+[16-Mar-2025 13:14:53 UTC] Insert successful. Last ID: 156
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT COUNT(*) as count FROM players with params: Array
+(
+)
+
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT COUNT(*) as count FROM website_users with params: Array
+(
+)
+
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT COUNT(*) as count FROM website_users WHERE role != 'user' with params: Array
+(
+)
+
+[16-Mar-2025 13:14:54 UTC] Executing query: 
+            SELECT last_login
+            FROM website_users
+            WHERE role != 'user' AND last_login IS NOT NULL
+            ORDER BY last_login DESC
+            LIMIT 1
+         with params: Array
+(
+)
+
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT COUNT(*) as count FROM admin_notifications WHERE user_id = ? AND is_read = 0 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SHOW TABLES LIKE 'pending_changes' with params: Array
+(
+)
+
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:54 UTC] Executing query: SELECT al.*, wu.username 
+                 FROM action_logs al 
+                 LEFT JOIN website_users wu ON al.user_id = wu.id 
+                 ORDER BY al.timestamp DESC 
+                 LIMIT ? with params: Array
+(
+    [0] => 5
+)
+
+[16-Mar-2025 13:14:55 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:56 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:56 UTC] Executing query: SELECT COUNT(*) as total FROM players with params: Array
+(
+)
+
+[16-Mar-2025 13:14:56 UTC] Executing query: SELECT * FROM players LIMIT ?, ? with params: Array
+(
+    [0] => 0
+    [1] => 10
+)
+
+[16-Mar-2025 13:14:56 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => view_all_players
+    [2] => Viewed all players page 1 of 81
+    [3] => ::1
+    [4] => 2025-03-16 13:14:56
+)
+
+[16-Mar-2025 13:14:56 UTC] Bound parameters with types: issss
+[16-Mar-2025 13:14:56 UTC] Insert successful. Last ID: 157
+[16-Mar-2025 13:14:56 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:56 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:56 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:56 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:58 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:58 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:58 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => view_player_details
+    [2] => Viewed details for player with citizenid: BA04C8B8
+    [3] => ::1
+    [4] => 2025-03-16 13:14:58
+)
+
+[16-Mar-2025 13:14:58 UTC] Bound parameters with types: issss
+[16-Mar-2025 13:14:58 UTC] Insert successful. Last ID: 158
+[16-Mar-2025 13:14:58 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:58 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:58 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:58 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:14:58 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:14:58 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:07 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:07 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:07 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:07 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:07 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:15:09 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:09 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:09 UTC] Executing query: SELECT * FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:09 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:09 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:09 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:09 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:15:09 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:10 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:10 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:10 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:10 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:15:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:14 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:14 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:14 UTC] getUserByCitizenId: Found player in game database with ID: 7091
+[16-Mar-2025 13:15:14 UTC] Executing query: SELECT * FROM website_users WHERE player_id = ? with params: Array
+(
+    [0] => 7091
+)
+
+[16-Mar-2025 13:15:14 UTC] getUserByCitizenId: No user found with player_id: 7091
+[16-Mar-2025 13:15:14 UTC] Executing query: SELECT * FROM user_characters 
+                WHERE user_id = ? AND is_primary = 1 
+                LIMIT 1 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:14 UTC] Primary character license: license2:18295990e72df0f763cc82e393947e41923ffb45
+[16-Mar-2025 13:15:14 UTC] New character license: license2:7383284c2e2ff16955fc6553c3fcb294c69b2de9
+[16-Mar-2025 13:15:14 UTC] License match result: FALSE
+[16-Mar-2025 13:15:14 UTC] Executing query: SELECT * FROM user_characters 
+                WHERE user_id = ? AND is_primary = 1 
+                LIMIT 1 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:14 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT COUNT(*) as count FROM players with params: Array
+(
+)
+
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT COUNT(*) as count FROM website_users with params: Array
+(
+)
+
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT COUNT(*) as count FROM website_users WHERE role != 'user' with params: Array
+(
+)
+
+[16-Mar-2025 13:15:37 UTC] Executing query: 
+            SELECT last_login
+            FROM website_users
+            WHERE role != 'user' AND last_login IS NOT NULL
+            ORDER BY last_login DESC
+            LIMIT 1
+         with params: Array
+(
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT COUNT(*) as count FROM admin_notifications WHERE user_id = ? AND is_read = 0 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SHOW TABLES LIKE 'pending_changes' with params: Array
+(
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:37 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:37 UTC] Executing query: SELECT al.*, wu.username 
+                 FROM action_logs al 
+                 LEFT JOIN website_users wu ON al.user_id = wu.id 
+                 ORDER BY al.timestamp DESC 
+                 LIMIT ? with params: Array
+(
+    [0] => 5
+)
+
+[16-Mar-2025 13:15:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:38 UTC] Executing query: SELECT COUNT(*) as total FROM players with params: Array
+(
+)
+
+[16-Mar-2025 13:15:38 UTC] Executing query: SELECT * FROM players LIMIT ?, ? with params: Array
+(
+    [0] => 0
+    [1] => 10
+)
+
+[16-Mar-2025 13:15:38 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => view_all_players
+    [2] => Viewed all players page 1 of 81
+    [3] => ::1
+    [4] => 2025-03-16 13:15:38
+)
+
+[16-Mar-2025 13:15:38 UTC] Bound parameters with types: issss
+[16-Mar-2025 13:15:38 UTC] Insert successful. Last ID: 159
+[16-Mar-2025 13:15:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:40 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:40 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:40 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:45 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:45 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:45 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => player_search
+    [2] => Searched for players with license: license2:18295990e72df0f763cc82e393947e41923ffb45
+    [3] => ::1
+    [4] => 2025-03-16 13:15:45
+)
+
+[16-Mar-2025 13:15:45 UTC] Bound parameters with types: issss
+[16-Mar-2025 13:15:45 UTC] Insert successful. Last ID: 160
+[16-Mar-2025 13:15:45 UTC] Search query: SELECT * FROM players WHERE license LIKE ? LIMIT 50 with term: license2:18295990e72df0f763cc82e393947e41923ffb45, field: license
+[16-Mar-2025 13:15:46 UTC] Search results count: 2
+[16-Mar-2025 13:15:46 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:46 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:46 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:46 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:52 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:52 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:53 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:53 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:53 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:15:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:54 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:54 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:54 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:15:57 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:57 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:57 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:57 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:57 UTC] getUserByCitizenId: Found player in game database with ID: 8997
+[16-Mar-2025 13:15:57 UTC] Executing query: SELECT * FROM website_users WHERE player_id = ? with params: Array
+(
+    [0] => 8997
+)
+
+[16-Mar-2025 13:15:57 UTC] getUserByCitizenId: No user found with player_id: 8997
+[16-Mar-2025 13:15:57 UTC] Executing query: SELECT * FROM user_characters 
+                WHERE user_id = ? AND is_primary = 1 
+                LIMIT 1 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:57 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:57 UTC] Primary character license: license2:18295990e72df0f763cc82e393947e41923ffb45
+[16-Mar-2025 13:15:57 UTC] New character license: license2:18295990e72df0f763cc82e393947e41923ffb45
+[16-Mar-2025 13:15:57 UTC] License match result: TRUE
+[16-Mar-2025 13:15:57 UTC] Executing query: SELECT id FROM user_characters WHERE user_id = ? AND citizenid = ? with params: Array
+(
+    [0] => 3
+    [1] => BX729FX8
+)
+
+[16-Mar-2025 13:15:57 UTC] Executing query: SELECT COUNT(*) as count FROM user_characters WHERE user_id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:57 UTC] Executing insert query: INSERT INTO user_characters (user_id, citizenid, is_primary) VALUES (?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => BX729FX8
+    [2] => 0
+)
+
+[16-Mar-2025 13:15:57 UTC] Bound parameters with types: isi
+[16-Mar-2025 13:15:57 UTC] Insert successful. Last ID: 2
+[16-Mar-2025 13:15:57 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:15:57 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:57 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:15:57 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:16:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:03 UTC] Executing query: SELECT * FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:03 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:03 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:16:04 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:04 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:04 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:04 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:04 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:16:12 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:12 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:12 UTC] Executing query: SELECT * FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:12 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:12 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:12 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:12 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:16:12 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:12 UTC] Executing query: SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:12 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:12 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:12 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:16:13 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT COUNT(*) as count FROM players with params: Array
+(
+)
+
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT COUNT(*) as count FROM website_users with params: Array
+(
+)
+
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT COUNT(*) as count FROM website_users WHERE role != 'user' with params: Array
+(
+)
+
+[16-Mar-2025 13:16:14 UTC] Executing query: 
+            SELECT last_login
+            FROM website_users
+            WHERE role != 'user' AND last_login IS NOT NULL
+            ORDER BY last_login DESC
+            LIMIT 1
+         with params: Array
+(
+)
+
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT COUNT(*) as count FROM admin_notifications WHERE user_id = ? AND is_read = 0 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SHOW TABLES LIKE 'pending_changes' with params: Array
+(
+)
+
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:14 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 13:16:14 UTC] Executing query: SELECT al.*, wu.username 
+                 FROM action_logs al 
+                 LEFT JOIN website_users wu ON al.user_id = wu.id 
+                 ORDER BY al.timestamp DESC 
+                 LIMIT ? with params: Array
+(
+    [0] => 5
+)
+

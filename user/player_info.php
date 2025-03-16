@@ -5,13 +5,39 @@ require_once '../config/init.php';
 // Require login
 requireLogin('../login.php');
 
-// Get user's citizen ID from database
+// Get player data using API
+$player = new Player();
+$citizenId = '';
+
+// Get player ID from user
+$userId = $_SESSION['user_id'];
 $user = new User();
-$userData = $user->getUserById($_SESSION['user_id']);
-if (!$userData || !isset($userData['player_id']) || empty($userData['player_id'])) {
-    // If user has no linked player, show appropriate message
-    $hasPlayerData = false;
-    $playerData = false;
+$userData = $user->getUserById($userId);
+
+// Get active character from session
+if (!empty($_SESSION['active_citizenid'])) {
+    $citizenId = $_SESSION['active_citizenid'];
+} else {
+    // Fallback to primary character
+    $primaryChar = $user->getPrimaryCharacter($userId);
+    if ($primaryChar) {
+        $citizenId = $primaryChar['citizenid'];
+        $_SESSION['active_citizenid'] = $citizenId;
+    }
+}
+
+// Get all characters for this user (for the switcher)
+$characters = $user->getUserCharacters($_SESSION['user_id']);
+
+$playerData = null;
+if (!empty($citizenId)) {
+    $playerData = $player->getPlayerByCitizenId($citizenId);
+}
+
+// Check if player exists
+if (!$playerData) {
+    $errorMessage = "Player data not found. Please select a valid character.";
+    $playerExists = false;
     $charInfo = false;
     $money = false;
     $job = false;
@@ -20,32 +46,16 @@ if (!$userData || !isset($userData['player_id']) || empty($userData['player_id']
     $vehicles = false;
     $lastLogin = false;
 } else {
-    $hasPlayerData = true;
+    $playerExists = true;
     
     // Get player data using player_id
-    $player = new Player();
-    $playerById = $player->getPlayerById($userData['player_id']);
-    if ($playerById && isset($playerById['citizenid'])) {
-        $citizenid = $playerById['citizenid'];
-        $playerData = $player->getPlayerByCitizenId($citizenid);
-        $charInfo = $player->getPlayerCharInfo($citizenid);
-        $money = $player->getPlayerMoney($citizenid);
-        $job = $player->getPlayerJob($citizenid);
-        $inventory = $player->getPlayerInventory($citizenid);
-        $metadata = $player->getPlayerMetadata($citizenid);
-        $vehicles = $player->getPlayerVehicles($citizenid);
-        $lastLogin = $player->getLastLoginTime($citizenid);
-    } else {
-        $hasPlayerData = false;
-        $playerData = false;
-        $charInfo = false;
-        $money = false;
-        $job = false;
-        $inventory = false;
-        $metadata = false;
-        $vehicles = false;
-        $lastLogin = false;
-    }
+    $charInfo = $player->getPlayerCharInfo($citizenId);
+    $money = $player->getPlayerMoney($citizenId);
+    $job = $player->getPlayerJob($citizenId);
+    $inventory = $player->getPlayerInventory($citizenId);
+    $metadata = $player->getPlayerMetadata($citizenId);
+    $vehicles = $player->getPlayerVehicles($citizenId);
+    $lastLogin = $player->getLastLoginTime($citizenId);
 }
 
 // Format the player data for display
@@ -395,6 +405,11 @@ $pageTitle = 'Player Details - ' . getSetting('site_name', 'FiveM Server Dashboa
                         </a>
                     </li>
                     <li class="sidebar-nav-item">
+                        <a href="characters.php" class="sidebar-nav-link">
+                            <i class="fas fa-users"></i> Manage Characters
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
                         <a href="profile.php" class="sidebar-nav-link">
                             <i class="fas fa-user-edit"></i> Edit Profile
                         </a>
@@ -417,9 +432,47 @@ $pageTitle = 'Player Details - ' . getSetting('site_name', 'FiveM Server Dashboa
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 main-content">
                 <!-- Page Header -->
-                <div class="page-header">
-                    <h1>Player Details</h1>
-                    <p class="text-muted">View your character information and stats</p>
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Player Details</h1>
+                    <?php if (!empty($characters) && count($characters) > 1): ?>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-2"></i> <?php echo $charInfo && isset($charInfo['firstname']) ? $charInfo['firstname'] . ' ' . $charInfo['lastname'] : 'Unknown Character'; ?>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                            <?php foreach ($characters as $char): 
+                                // Get character name
+                                $charPlayerData = $player->getPlayerByCitizenId($char['citizenid']);
+                                $charName = "Unknown";
+                                if ($charPlayerData && isset($charPlayerData['charinfo'])) {
+                                    $cInfo = json_decode($charPlayerData['charinfo'], true);
+                                    if ($cInfo && isset($cInfo['firstname'], $cInfo['lastname'])) {
+                                        $charName = $cInfo['firstname'] . " " . $cInfo['lastname'];
+                                    }
+                                }
+                            ?>
+                                <li>
+                                    <form method="post" action="characters.php">
+                                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                        <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($char['citizenid']); ?>">
+                                        <button type="submit" name="switch_character" class="dropdown-item <?php echo ($char['citizenid'] == $citizenId) ? 'active' : ''; ?>">
+                                            <?php echo htmlspecialchars($charName); ?>
+                                            <?php if ($char['is_primary']): ?>
+                                                <span class="badge bg-primary ms-2">Primary</span>
+                                            <?php endif; ?>
+                                        </button>
+                                    </form>
+                                </li>
+                            <?php endforeach; ?>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="characters.php"><i class="fas fa-cog me-2"></i> Manage Characters</a></li>
+                        </ul>
+                    </div>
+                    <?php else: ?>
+                    <a href="characters.php" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-users me-2"></i> Manage Characters
+                    </a>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Flash Messages -->
@@ -431,17 +484,15 @@ $pageTitle = 'Player Details - ' . getSetting('site_name', 'FiveM Server Dashboa
                 </div>
                 <?php endif; ?>
 
-                <?php if (!$hasPlayerData): ?>
+                <?php if (!$playerExists): ?>
                 <!-- No Player Data Alert -->
                 <div class="alert alert-info" role="alert">
-                    <h4 class="alert-heading"><i class="fas fa-info-circle me-2"></i>No Player Data Found</h4>
-                    <p>We couldn't find any game character associated with your account. This could be because:</p>
-                    <ul>
-                        <li>You have not played on the server yet</li>
-                        <li>Your account hasn't been linked to your in-game character</li>
-                    </ul>
-                    <hr>
-                    <p class="mb-0">Please join the server and create a character, or contact an administrator if you believe this is an error.</p>
+                    <h4 class="alert-heading">No Player Data!</h4>
+                    <?php if (isset($errorMessage)): ?>
+                        <p><?php echo $errorMessage; ?></p>
+                    <?php else: ?>
+                        <p>There is no character data associated with your account. Please select or add a character from the <a href="characters.php" class="alert-link">Manage Characters</a> page.</p>
+                    <?php endif; ?>
                 </div>
                 <?php else: ?>
                 <!-- Character Info -->

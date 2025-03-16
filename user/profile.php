@@ -240,6 +240,11 @@ $pageTitle = 'Edit Profile - ' . getSetting('site_name', 'FiveM Server Dashboard
                         </a>
                     </li>
                     <li class="sidebar-nav-item">
+                        <a href="characters.php" class="sidebar-nav-link">
+                            <i class="fas fa-users"></i> Manage Characters
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
                         <a href="profile.php" class="sidebar-nav-link active">
                             <i class="fas fa-user-edit"></i> Edit Profile
                         </a>

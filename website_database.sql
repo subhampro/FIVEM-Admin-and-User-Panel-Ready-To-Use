@@ -74,6 +74,19 @@ CREATE TABLE IF NOT EXISTS `pending_changes` (
   KEY `reviewer_id` (`reviewer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Table for user-character relationships (multi-character support)
+CREATE TABLE IF NOT EXISTS `user_characters` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `citizenid` varchar(50) NOT NULL,
+  `is_primary` tinyint(1) NOT NULL DEFAULT 0,
+  `added_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_citizenid` (`user_id`, `citizenid`),
+  KEY `user_id` (`user_id`),
+  KEY `citizenid` (`citizenid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Table for website settings
 CREATE TABLE IF NOT EXISTS `website_settings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

@@ -168,6 +168,29 @@ function loginUser($username, $password, $remember = false) {
     $_SESSION['email'] = $userData['email'];
     $_SESSION['last_active'] = time();
     
+    // Get primary character for this user
+    $primaryChar = $user->getPrimaryCharacter($userData['id']);
+    if ($primaryChar) {
+        $_SESSION['active_citizenid'] = $primaryChar['citizenid'];
+        // Log in log
+        $logger = new Logger();
+        $logger->logAction($userData['id'], 'login', 'User logged in with character: ' . $primaryChar['citizenid']);
+    } else {
+        // Try to get any character
+        $characters = $user->getUserCharacters($userData['id']);
+        if ($characters && !empty($characters)) {
+            $_SESSION['active_citizenid'] = $characters[0]['citizenid'];
+            
+            // Log in log
+            $logger = new Logger();
+            $logger->logAction($userData['id'], 'login', 'User logged in with fallback character: ' . $characters[0]['citizenid']);
+        } else {
+            // No characters found - this should not happen due to our registration process
+            $logger = new Logger();
+            $logger->logAction($userData['id'], 'login_warning', 'User logged in but no characters found');
+        }
+    }
+    
     // Set admin status in session
     if (isset($userData['role']) && $userData['role'] != 'user') {
         $_SESSION['is_admin'] = 1;

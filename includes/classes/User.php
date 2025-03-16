@@ -92,6 +92,15 @@ class User {
             $result = $this->db->insert('website_users', $userData);
             if ($result) {
                 error_log("Registration successful: User ID $result created");
+                
+                // Add the character to user_characters table
+                try {
+                    $this->addCharacter($result, $citizenid, true);
+                    error_log("Added citizenid $citizenid as primary character for user $result");
+                } catch (Exception $e) {
+                    error_log("Failed to add character during registration: " . $e->getMessage());
+                    // Continue anyway since the user account was created
+                }
             } else {
                 error_log("Registration failed: Database insert returned false");
             }
@@ -368,6 +377,270 @@ class User {
             'id = ?', 
             [$id]
         );
+    }
+    
+    /**
+     * Get all characters linked to a user
+     * 
+     * @param int $userId The user ID
+     * @return array|false Array of character data or false on failure
+     */
+    public function getUserCharacters($userId) {
+        try {
+            $query = "SELECT uc.*, p.license FROM user_characters uc 
+                    LEFT JOIN players p ON uc.citizenid = p.citizenid 
+                    WHERE uc.user_id = ? 
+                    ORDER BY uc.is_primary DESC, uc.added_at ASC";
+            
+            return $this->db->getAll($query, [$userId]);
+        } catch (Exception $e) {
+            error_log("Error in getUserCharacters: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Add a new character to a user
+     * 
+     * @param int $userId The user ID
+     * @param string $citizenid The character's citizen ID
+     * @param bool $isPrimary Whether this is the primary character
+     * @return bool True on success, false on failure
+     */
+    public function addCharacter($userId, $citizenid, $isPrimary = false) {
+        try {
+            // Check if character already exists for this user
+            $existingChar = $this->db->getSingle(
+                "SELECT id FROM user_characters WHERE user_id = ? AND citizenid = ?", 
+                [$userId, $citizenid]
+            );
+            
+            if ($existingChar) {
+                error_log("Character already exists for this user");
+                return false;
+            }
+            
+            // Check if primary is set and update other characters if needed
+            if ($isPrimary) {
+                $this->db->update(
+                    'user_characters', 
+                    ['is_primary' => 0], 
+                    'user_id = ?', 
+                    [$userId]
+                );
+            }
+            
+            // Default to primary if this is the first character
+            if (!$isPrimary) {
+                $charCount = $this->db->getSingle(
+                    "SELECT COUNT(*) as count FROM user_characters WHERE user_id = ?", 
+                    [$userId]
+                );
+                
+                if ($charCount && $charCount['count'] == 0) {
+                    $isPrimary = true;
+                }
+            }
+            
+            // Add the character
+            return $this->db->insert('user_characters', [
+                'user_id' => $userId,
+                'citizenid' => $citizenid,
+                'is_primary' => $isPrimary ? 1 : 0
+            ]);
+        } catch (Exception $e) {
+            error_log("Error in addCharacter: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Remove a character from a user
+     * 
+     * @param int $userId The user ID
+     * @param string $citizenid The character's citizen ID
+     * @return bool True on success, false on failure
+     */
+    public function removeCharacter($userId, $citizenid) {
+        try {
+            // Check if this is the primary character
+            $charInfo = $this->db->getSingle(
+                "SELECT is_primary FROM user_characters WHERE user_id = ? AND citizenid = ?", 
+                [$userId, $citizenid]
+            );
+            
+            if (!$charInfo) {
+                error_log("Character not found for deletion");
+                return false;
+            }
+            
+            // If this is primary character, don't allow deletion if it's the only one
+            if ($charInfo['is_primary']) {
+                $charCount = $this->db->getSingle(
+                    "SELECT COUNT(*) as count FROM user_characters WHERE user_id = ?", 
+                    [$userId]
+                );
+                
+                if ($charCount && $charCount['count'] <= 1) {
+                    error_log("Cannot delete the only character of a user");
+                    return false;
+                }
+            }
+            
+            // Delete the character
+            $result = $this->db->delete(
+                'user_characters', 
+                'user_id = ? AND citizenid = ?', 
+                [$userId, $citizenid]
+            );
+            
+            // If this was the primary character, set another as primary
+            if ($charInfo['is_primary'] && $result) {
+                $firstChar = $this->db->getSingle(
+                    "SELECT citizenid FROM user_characters WHERE user_id = ? ORDER BY added_at ASC LIMIT 1", 
+                    [$userId]
+                );
+                
+                if ($firstChar) {
+                    $this->db->update(
+                        'user_characters', 
+                        ['is_primary' => 1], 
+                        'user_id = ? AND citizenid = ?', 
+                        [$userId, $firstChar['citizenid']]
+                    );
+                }
+            }
+            
+            return $result;
+        } catch (Exception $e) {
+            error_log("Error in removeCharacter: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Set a character as primary for a user
+     * 
+     * @param int $userId The user ID
+     * @param string $citizenid The character's citizen ID
+     * @return bool True on success, false on failure
+     */
+    public function setPrimaryCharacter($userId, $citizenid) {
+        try {
+            // First make sure this character exists for the user
+            $charExists = $this->db->getSingle(
+                "SELECT id FROM user_characters WHERE user_id = ? AND citizenid = ?", 
+                [$userId, $citizenid]
+            );
+            
+            if (!$charExists) {
+                error_log("Character not found for setting as primary");
+                return false;
+            }
+            
+            // Set all characters to non-primary
+            $this->db->update(
+                'user_characters', 
+                ['is_primary' => 0], 
+                'user_id = ?', 
+                [$userId]
+            );
+            
+            // Set the specified character as primary
+            return $this->db->update(
+                'user_characters', 
+                ['is_primary' => 1], 
+                'user_id = ? AND citizenid = ?', 
+                [$userId, $citizenid]
+            );
+        } catch (Exception $e) {
+            error_log("Error in setPrimaryCharacter: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Get the primary character for a user
+     * 
+     * @param int $userId The user ID
+     * @return array|false The primary character data or false if none found
+     */
+    public function getPrimaryCharacter($userId) {
+        try {
+            return $this->db->getSingle(
+                "SELECT * FROM user_characters 
+                WHERE user_id = ? AND is_primary = 1 
+                LIMIT 1", 
+                [$userId]
+            );
+        } catch (Exception $e) {
+            error_log("Error in getPrimaryCharacter: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Verify if a new citizenid belongs to the same player by checking license
+     * 
+     * @param int $userId The user ID
+     * @param string $newCitizenId The new character's citizen ID
+     * @return bool True if valid, false otherwise
+     */
+    public function verifyCharacterOwnership($userId, $newCitizenId) {
+        try {
+            // Get user's primary character's license
+            $primaryChar = $this->getPrimaryCharacter($userId);
+            
+            if (!$primaryChar) {
+                // Try to get any character of this user
+                $anyChar = $this->db->getSingle(
+                    "SELECT citizenid FROM user_characters WHERE user_id = ? LIMIT 1", 
+                    [$userId]
+                );
+                
+                if (!$anyChar) {
+                    error_log("No existing character found for user");
+                    return false;
+                }
+                
+                $primaryCitizenId = $anyChar['citizenid'];
+            } else {
+                $primaryCitizenId = $primaryChar['citizenid'];
+            }
+            
+            // Get license of primary character
+            $player = new Player();
+            $primaryPlayer = $player->getPlayerByCitizenId($primaryCitizenId);
+            
+            if (!$primaryPlayer || !isset($primaryPlayer['license'])) {
+                error_log("Could not find license for primary character");
+                error_log("Primary character data: " . print_r($primaryPlayer, true));
+                return false;
+            }
+            
+            $primaryLicense = $primaryPlayer['license'];
+            error_log("Primary character license: " . $primaryLicense);
+            
+            // Get license of new character
+            $newPlayer = $player->getPlayerByCitizenId($newCitizenId);
+            
+            if (!$newPlayer || !isset($newPlayer['license'])) {
+                error_log("Could not find license for new character");
+                error_log("New character data: " . print_r($newPlayer, true));
+                return false;
+            }
+            
+            $newLicense = $newPlayer['license'];
+            error_log("New character license: " . $newLicense);
+            
+            // Compare licenses
+            $licenseMatch = $primaryLicense === $newLicense;
+            error_log("License match result: " . ($licenseMatch ? "TRUE" : "FALSE"));
+            return $licenseMatch;
+        } catch (Exception $e) {
+            error_log("Error in verifyCharacterOwnership: " . $e->getMessage());
+            return false;
+        }
     }
 }
 ?> 

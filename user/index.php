@@ -5,30 +5,52 @@ require_once '../config/init.php';
 // Require login
 requireLogin('../login.php');
 
-// Get user's citizen ID from database
+// Get user's data
 $user = new User();
 $userData = $user->getUserById($_SESSION['user_id']);
-if (!$userData || !isset($userData['player_id']) || empty($userData['player_id'])) {
-    // If user has no linked player, show appropriate message
-    $hasPlayerData = false;
+
+// Get player's data
+$player = new Player();
+$playerData = null;
+$citizenId = '';
+
+// Get active character from session
+if (!empty($_SESSION['active_citizenid'])) {
+    $citizenId = $_SESSION['active_citizenid'];
 } else {
-    $hasPlayerData = true;
-    
-    // Get player data using player_id
-    $player = new Player();
-    $playerById = $player->getPlayerById($userData['player_id']);
-    if ($playerById && isset($playerById['citizenid'])) {
-        $citizenid = $playerById['citizenid'];
-        $playerData = $player->getPlayerByCitizenId($citizenid);
-        $charInfo = $player->getPlayerCharInfo($citizenid);
-        $money = $player->getPlayerMoney($citizenid);
-        $job = $player->getPlayerJob($citizenid);
-        $lastLogin = $player->getLastLoginTime($citizenid);
-        $vehicles = $player->getPlayerVehicles($citizenid);
-    } else {
-        $hasPlayerData = false;
+    // Fallback to primary character
+    $primaryChar = $user->getPrimaryCharacter($_SESSION['user_id']);
+    if ($primaryChar) {
+        $citizenId = $primaryChar['citizenid'];
+        $_SESSION['active_citizenid'] = $citizenId;
     }
 }
+
+// Character switcher and display which character is active
+$characters = $user->getUserCharacters($_SESSION['user_id']);
+$activeCharName = "No Character";
+
+// Get player data
+if (!empty($citizenId)) {
+    $playerData = $player->getPlayerByCitizenId($citizenId);
+    if ($playerData && isset($playerData['charinfo'])) {
+        $charInfo = json_decode($playerData['charinfo'], true);
+        if ($charInfo && isset($charInfo['firstname'], $charInfo['lastname'])) {
+            $activeCharName = $charInfo['firstname'] . " " . $charInfo['lastname'];
+        }
+    }
+    
+    // Get additional player data if player exists
+    if ($playerData) {
+        $money = $player->getPlayerMoney($citizenId);
+        $job = $player->getPlayerJob($citizenId);
+        $lastLogin = $player->getLastLoginTime($citizenId);
+        $vehicles = $player->getPlayerVehicles($citizenId);
+    }
+}
+
+// Player exists check
+$playerExists = $playerData !== null;
 
 // Page title
 $pageTitle = 'User Dashboard - ' . getSetting('site_name', 'FiveM Server Dashboard');
@@ -257,6 +279,11 @@ $pageTitle = 'User Dashboard - ' . getSetting('site_name', 'FiveM Server Dashboa
                         </a>
                     </li>
                     <li class="sidebar-nav-item">
+                        <a href="characters.php" class="sidebar-nav-link">
+                            <i class="fas fa-users"></i> Manage Characters
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
                         <a href="profile.php" class="sidebar-nav-link">
                             <i class="fas fa-user-edit"></i> Edit Profile
                         </a>
@@ -279,9 +306,47 @@ $pageTitle = 'User Dashboard - ' . getSetting('site_name', 'FiveM Server Dashboa
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 main-content">
                 <!-- Page Header -->
-                <div class="page-header">
-                    <h1>Dashboard</h1>
-                    <p class="text-muted">Welcome back, <?php echo $_SESSION['username']; ?>!</p>
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Dashboard</h1>
+                    <?php if (!empty($characters) && count($characters) > 1): ?>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-2"></i> <?php echo htmlspecialchars($activeCharName); ?>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                            <?php foreach ($characters as $char): 
+                                // Get character name
+                                $charPlayerData = $player->getPlayerByCitizenId($char['citizenid']);
+                                $charName = "Unknown";
+                                if ($charPlayerData && isset($charPlayerData['charinfo'])) {
+                                    $cInfo = json_decode($charPlayerData['charinfo'], true);
+                                    if ($cInfo && isset($cInfo['firstname'], $cInfo['lastname'])) {
+                                        $charName = $cInfo['firstname'] . " " . $cInfo['lastname'];
+                                    }
+                                }
+                            ?>
+                                <li>
+                                    <form method="post" action="characters.php">
+                                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                                        <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($char['citizenid']); ?>">
+                                        <button type="submit" name="switch_character" class="dropdown-item <?php echo ($char['citizenid'] == $citizenId) ? 'active' : ''; ?>">
+                                            <?php echo htmlspecialchars($charName); ?>
+                                            <?php if ($char['is_primary']): ?>
+                                                <span class="badge bg-primary ms-2">Primary</span>
+                                            <?php endif; ?>
+                                        </button>
+                                    </form>
+                                </li>
+                            <?php endforeach; ?>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="characters.php"><i class="fas fa-cog me-2"></i> Manage Characters</a></li>
+                        </ul>
+                    </div>
+                    <?php else: ?>
+                    <a href="characters.php" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-users me-2"></i> Manage Characters
+                    </a>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Flash Messages -->
@@ -293,7 +358,7 @@ $pageTitle = 'User Dashboard - ' . getSetting('site_name', 'FiveM Server Dashboa
                 </div>
                 <?php endif; ?>
 
-                <?php if (!$hasPlayerData): ?>
+                <?php if (!$playerExists): ?>
                 <!-- No Player Data Alert -->
                 <div class="alert alert-info alert-no-data" role="alert">
                     <h4 class="alert-heading"><i class="fas fa-info-circle me-2"></i>No Player Data Found</h4>
@@ -315,8 +380,8 @@ $pageTitle = 'User Dashboard - ' . getSetting('site_name', 'FiveM Server Dashboa
                         <div class="d-flex flex-column flex-md-row align-items-center">
                             <img src="https://i.imgur.com/4H2c5AB.gif" alt="Character Avatar" class="profile-image">
                             <div class="character-info mt-3 mt-md-0">
-                                <h2><?php echo isset($charInfo['firstname']) ? $charInfo['firstname'] . ' ' . $charInfo['lastname'] : 'Unknown Character'; ?></h2>
-                                <p><strong>Citizen ID:</strong> <?php echo $citizenid; ?></p>
+                                <h2><?php echo $activeCharName; ?></h2>
+                                <p><strong>Citizen ID:</strong> <?php echo $citizenId; ?></p>
                                 <p><strong>Phone:</strong> <?php echo isset($charInfo['phone']) ? $charInfo['phone'] : 'N/A'; ?></p>
                                 <p><strong>Gender:</strong> <?php echo isset($charInfo['gender']) ? ($charInfo['gender'] == 0 ? 'Male' : 'Female') : 'Unknown'; ?></p>
                                 <p>
