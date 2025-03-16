@@ -48,42 +48,139 @@ $playerDetails = [
 ];
 
 // Process the edit form
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_player'])) {
-    $citizenId = $_POST['citizen_id'] ?? '';
-    $fieldName = $_POST['field_name'] ?? '';
-    $oldValue = $_POST['old_value'] ?? '';
-    $newValue = $_POST['new_value'] ?? '';
-    
-    // Validate inputs
-    if (empty($citizenId) || empty($fieldName) || empty($newValue) || !isset($_SESSION['user_id'])) {
-        $messageType = 'danger';
-        $message = 'Invalid input data. Please check all fields.';
-    } else {
-        // Initialize PendingChanges class
-        $pendingChanges = new PendingChanges();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Process standard edit form
+    if (isset($_POST['edit_player'])) {
+        $citizenId = $_POST['citizen_id'] ?? '';
+        $fieldName = $_POST['field_name'] ?? '';
+        $oldValue = $_POST['old_value'] ?? '';
+        $newValue = $_POST['new_value'] ?? '';
         
-        // Add the change request to pending_changes table
-        $result = $pendingChanges->addPendingChange(
-            $_SESSION['user_id'],
-            'players',
-            $citizenId,
-            $fieldName,
-            $oldValue,
-            $newValue
-        );
+        // Validate inputs
+        if (empty($citizenId) || empty($fieldName) || empty($newValue) || !isset($_SESSION['user_id'])) {
+            $messageType = 'danger';
+            $message = 'Invalid input data. Please check all fields.';
+        } else {
+            // Initialize PendingChanges class
+            $pendingChanges = new PendingChanges();
+            
+            // Add the change request to pending_changes table
+            $result = $pendingChanges->addPendingChange(
+                $_SESSION['user_id'],
+                'players',
+                $citizenId,
+                $fieldName,
+                $oldValue,
+                $newValue
+            );
+            
+            if ($result) {
+                // Log the action
+                $logger->logAction(
+                    $_SESSION['user_id'],
+                    'edit_request',
+                    "Submitted edit request for player {$citizenId} - field: {$fieldName}"
+                );
+                
+                $messageType = 'success';
+                $message = 'Edit request submitted successfully. It will be reviewed by an administrator.';
+            } else {
+                error_log("Failed to submit edit request for player {$citizenId} - field: {$fieldName}");
+                $messageType = 'danger';
+                $message = 'Failed to submit the edit request. Please try again.';
+            }
+        }
+    }
+    // Process money edit forms (set, add, remove)
+    elseif (isset($_POST['action']) && $_POST['action'] === 'edit') {
+        $citizenId = $_POST['citizenid'] ?? '';
+        $targetTable = $_POST['target_table'] ?? '';
+        $field = $_POST['field'] ?? '';
+        $subfield = $_POST['subfield'] ?? '';
+        $operation = $_POST['operation'] ?? 'set';
+        $oldValue = $_POST['old_value'] ?? '';
+        
+        // Check operation type
+        if ($operation === 'set' && isset($_POST['new_value'])) {
+            // Set operation (directly set value)
+            $newValue = floatval($_POST['new_value']);
+            
+            // Get current money data
+            $moneyData = $playerDetails['money'];
+            $moneyData[$subfield] = $newValue;
+            
+            // Create pending change
+            $pendingChanges = new PendingChanges();
+            $result = $pendingChanges->addPendingChange(
+                $_SESSION['user_id'],
+                $targetTable,
+                $citizenId,
+                $field . '.' . $subfield,
+                $oldValue,
+                $newValue,
+                'set' // Operation type
+            );
+            
+            $operationText = "Set {$subfield} to {$newValue}";
+        }
+        elseif ($operation === 'add' && isset($_POST['add_value'])) {
+            // Add operation
+            $addAmount = floatval($_POST['add_value']);
+            $currentValue = floatval($oldValue);
+            
+            // Create pending change
+            $pendingChanges = new PendingChanges();
+            $result = $pendingChanges->addPendingChange(
+                $_SESSION['user_id'],
+                $targetTable,
+                $citizenId,
+                $field . '.' . $subfield,
+                $currentValue,
+                $addAmount,
+                'add' // Operation type
+            );
+            
+            $operationText = "Add {$addAmount} to {$subfield}";
+        }
+        elseif ($operation === 'remove' && isset($_POST['remove_value'])) {
+            // Remove operation
+            $removeAmount = floatval($_POST['remove_value']);
+            $currentValue = floatval($oldValue);
+            
+            // Create pending change
+            $pendingChanges = new PendingChanges();
+            $result = $pendingChanges->addPendingChange(
+                $_SESSION['user_id'],
+                $targetTable,
+                $citizenId,
+                $field . '.' . $subfield,
+                $currentValue,
+                $removeAmount,
+                'remove' // Operation type
+            );
+            
+            $operationText = "Remove {$removeAmount} from {$subfield}";
+        }
+        else {
+            $result = false;
+            $operationText = "Unknown operation";
+        }
         
         if ($result) {
             // Log the action
             $logger->logAction(
                 $_SESSION['user_id'],
                 'edit_request',
-                "Submitted edit request for player {$citizenId} - field: {$fieldName}"
+                "Submitted edit request for player {$citizenId} - {$operationText}"
             );
             
             $messageType = 'success';
-            $message = 'Edit request submitted successfully. It will be reviewed by an administrator.';
+            $message = "Your request to {$operationText} was submitted successfully and will be reviewed by an administrator.";
+            
+            // Refresh player details after submission
+            $playerDetails['money'] = $player->getPlayerMoney($citizenid);
         } else {
-            error_log("Failed to submit edit request for player {$citizenId} - field: {$fieldName}");
+            error_log("Failed to submit edit request for player {$citizenId} - {$operationText}");
             $messageType = 'danger';
             $message = 'Failed to submit the edit request. Please try again.';
         }
@@ -491,29 +588,103 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                     <h5 class="mb-1">Edit Cash</h5>
                                     <p class="text-muted mb-3">Current: $<?php echo number_format($playerDetails['money']['cash'] ?? 0, 2); ?></p>
                                     
-                                    <form method="post" action="">
-                                        <input type="hidden" name="action" value="edit">
-                                        <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
-                                        <input type="hidden" name="target_table" value="players">
-                                        <input type="hidden" name="field" value="money">
-                                        <input type="hidden" name="subfield" value="cash">
-                                        <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['cash'] ?? 0; ?>">
-                                        
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label for="cash" class="form-label required">Cash Amount</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text bg-dark text-light border-secondary">$</span>
-                                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="cash" name="new_value" value="<?php echo $playerDetails['money']['cash'] ?? 0; ?>" step="0.01" min="0" required>
+                                    <ul class="nav nav-tabs mb-3" id="cashTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="set-cash-tab" data-bs-toggle="tab" data-bs-target="#set-cash" type="button" role="tab">Set Cash</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="add-cash-tab" data-bs-toggle="tab" data-bs-target="#add-cash" type="button" role="tab">Add Cash</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="remove-cash-tab" data-bs-toggle="tab" data-bs-target="#remove-cash" type="button" role="tab">Remove Cash</button>
+                                        </li>
+                                    </ul>
+                                    
+                                    <div class="tab-content" id="cashTabsContent">
+                                        <!-- Set Cash -->
+                                        <div class="tab-pane fade show active" id="set-cash" role="tabpanel">
+                                            <form method="post" action="">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
+                                                <input type="hidden" name="target_table" value="players">
+                                                <input type="hidden" name="field" value="money">
+                                                <input type="hidden" name="subfield" value="cash">
+                                                <input type="hidden" name="operation" value="set">
+                                                <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['cash'] ?? 0; ?>">
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="cash" class="form-label required">Set Cash Amount</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-dark text-light border-secondary">$</span>
+                                                            <input type="number" class="form-control bg-dark text-light border-secondary" id="cash" name="new_value" value="<?php echo $playerDetails['money']['cash'] ?? 0; ?>" step="0.01" min="0" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mt-4">
+                                                            <button type="submit" class="btn btn-primary">Set Cash Amount</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mt-4">
-                                                    <button type="submit" class="btn btn-primary">Save Cash Amount</button>
-                                                </div>
-                                            </div>
+                                            </form>
                                         </div>
-                                    </form>
+                                        
+                                        <!-- Add Cash -->
+                                        <div class="tab-pane fade" id="add-cash" role="tabpanel">
+                                            <form method="post" action="">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
+                                                <input type="hidden" name="target_table" value="players">
+                                                <input type="hidden" name="field" value="money">
+                                                <input type="hidden" name="subfield" value="cash">
+                                                <input type="hidden" name="operation" value="add">
+                                                <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['cash'] ?? 0; ?>">
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="add_cash" class="form-label required">Amount to Add</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-dark text-light border-secondary">$</span>
+                                                            <input type="number" class="form-control bg-dark text-light border-secondary" id="add_cash" name="add_value" step="0.01" min="0.01" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mt-4">
+                                                            <button type="submit" class="btn btn-success">Add to Cash</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        
+                                        <!-- Remove Cash -->
+                                        <div class="tab-pane fade" id="remove-cash" role="tabpanel">
+                                            <form method="post" action="">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
+                                                <input type="hidden" name="target_table" value="players">
+                                                <input type="hidden" name="field" value="money">
+                                                <input type="hidden" name="subfield" value="cash">
+                                                <input type="hidden" name="operation" value="remove">
+                                                <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['cash'] ?? 0; ?>">
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="remove_cash" class="form-label required">Amount to Remove</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-dark text-light border-secondary">$</span>
+                                                            <input type="number" class="form-control bg-dark text-light border-secondary" id="remove_cash" name="remove_value" step="0.01" min="0.01" max="<?php echo $playerDetails['money']['cash'] ?? 0; ?>" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mt-4">
+                                                            <button type="submit" class="btn btn-danger">Remove from Cash</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <!-- Bank -->
@@ -521,29 +692,103 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                     <h5 class="mb-1">Edit Bank Balance</h5>
                                     <p class="text-muted mb-3">Current: $<?php echo number_format($playerDetails['money']['bank'] ?? 0, 2); ?></p>
                                     
-                                    <form method="post" action="">
-                                        <input type="hidden" name="action" value="edit">
-                                        <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
-                                        <input type="hidden" name="target_table" value="players">
-                                        <input type="hidden" name="field" value="money">
-                                        <input type="hidden" name="subfield" value="bank">
-                                        <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['bank'] ?? 0; ?>">
-                                        
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label for="bank" class="form-label required">Bank Amount</label>
-                                                <div class="input-group">
-                                                    <span class="input-group-text bg-dark text-light border-secondary">$</span>
-                                                    <input type="number" class="form-control bg-dark text-light border-secondary" id="bank" name="new_value" value="<?php echo $playerDetails['money']['bank'] ?? 0; ?>" step="0.01" min="0" required>
+                                    <ul class="nav nav-tabs mb-3" id="bankTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="set-bank-tab" data-bs-toggle="tab" data-bs-target="#set-bank" type="button" role="tab">Set Bank</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="add-bank-tab" data-bs-toggle="tab" data-bs-target="#add-bank" type="button" role="tab">Add Bank</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="remove-bank-tab" data-bs-toggle="tab" data-bs-target="#remove-bank" type="button" role="tab">Remove Bank</button>
+                                        </li>
+                                    </ul>
+                                    
+                                    <div class="tab-content" id="bankTabsContent">
+                                        <!-- Set Bank -->
+                                        <div class="tab-pane fade show active" id="set-bank" role="tabpanel">
+                                            <form method="post" action="">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
+                                                <input type="hidden" name="target_table" value="players">
+                                                <input type="hidden" name="field" value="money">
+                                                <input type="hidden" name="subfield" value="bank">
+                                                <input type="hidden" name="operation" value="set">
+                                                <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['bank'] ?? 0; ?>">
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="bank" class="form-label required">Set Bank Amount</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-dark text-light border-secondary">$</span>
+                                                            <input type="number" class="form-control bg-dark text-light border-secondary" id="bank" name="new_value" value="<?php echo $playerDetails['money']['bank'] ?? 0; ?>" step="0.01" min="0" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mt-4">
+                                                            <button type="submit" class="btn btn-primary">Set Bank Amount</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mt-4">
-                                                    <button type="submit" class="btn btn-primary">Save Bank Amount</button>
-                                                </div>
-                                            </div>
+                                            </form>
                                         </div>
-                                    </form>
+                                        
+                                        <!-- Add Bank -->
+                                        <div class="tab-pane fade" id="add-bank" role="tabpanel">
+                                            <form method="post" action="">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
+                                                <input type="hidden" name="target_table" value="players">
+                                                <input type="hidden" name="field" value="money">
+                                                <input type="hidden" name="subfield" value="bank">
+                                                <input type="hidden" name="operation" value="add">
+                                                <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['bank'] ?? 0; ?>">
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="add_bank" class="form-label required">Amount to Add</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-dark text-light border-secondary">$</span>
+                                                            <input type="number" class="form-control bg-dark text-light border-secondary" id="add_bank" name="add_value" step="0.01" min="0.01" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mt-4">
+                                                            <button type="submit" class="btn btn-success">Add to Bank</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        
+                                        <!-- Remove Bank -->
+                                        <div class="tab-pane fade" id="remove-bank" role="tabpanel">
+                                            <form method="post" action="">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
+                                                <input type="hidden" name="target_table" value="players">
+                                                <input type="hidden" name="field" value="money">
+                                                <input type="hidden" name="subfield" value="bank">
+                                                <input type="hidden" name="operation" value="remove">
+                                                <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['bank'] ?? 0; ?>">
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="remove_bank" class="form-label required">Amount to Remove</label>
+                                                        <div class="input-group">
+                                                            <span class="input-group-text bg-dark text-light border-secondary">$</span>
+                                                            <input type="number" class="form-control bg-dark text-light border-secondary" id="remove_bank" name="remove_value" step="0.01" min="0.01" max="<?php echo $playerDetails['money']['bank'] ?? 0; ?>" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mt-4">
+                                                            <button type="submit" class="btn btn-danger">Remove from Bank</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <!-- Crypto -->
@@ -551,26 +796,94 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
                                     <h5 class="mb-1">Edit Crypto</h5>
                                     <p class="text-muted mb-3">Current: <?php echo number_format($playerDetails['money']['crypto'] ?? 0, 2); ?></p>
                                     
-                                    <form method="post" action="">
-                                        <input type="hidden" name="action" value="edit">
-                                        <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
-                                        <input type="hidden" name="target_table" value="players">
-                                        <input type="hidden" name="field" value="money">
-                                        <input type="hidden" name="subfield" value="crypto">
-                                        <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['crypto'] ?? 0; ?>">
-                                        
-                                        <div class="row g-3">
-                                            <div class="col-md-6">
-                                                <label for="crypto" class="form-label required">Crypto Amount</label>
-                                                <input type="number" class="form-control bg-dark text-light border-secondary" id="crypto" name="new_value" value="<?php echo $playerDetails['money']['crypto'] ?? 0; ?>" step="0.01" min="0" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="mt-4">
-                                                    <button type="submit" class="btn btn-primary">Save Crypto Amount</button>
+                                    <ul class="nav nav-tabs mb-3" id="cryptoTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="set-crypto-tab" data-bs-toggle="tab" data-bs-target="#set-crypto" type="button" role="tab">Set Crypto</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="add-crypto-tab" data-bs-toggle="tab" data-bs-target="#add-crypto" type="button" role="tab">Add Crypto</button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="remove-crypto-tab" data-bs-toggle="tab" data-bs-target="#remove-crypto" type="button" role="tab">Remove Crypto</button>
+                                        </li>
+                                    </ul>
+                                    
+                                    <div class="tab-content" id="cryptoTabsContent">
+                                        <!-- Set Crypto -->
+                                        <div class="tab-pane fade show active" id="set-crypto" role="tabpanel">
+                                            <form method="post" action="">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
+                                                <input type="hidden" name="target_table" value="players">
+                                                <input type="hidden" name="field" value="money">
+                                                <input type="hidden" name="subfield" value="crypto">
+                                                <input type="hidden" name="operation" value="set">
+                                                <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['crypto'] ?? 0; ?>">
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="crypto" class="form-label required">Set Crypto Amount</label>
+                                                        <input type="number" class="form-control bg-dark text-light border-secondary" id="crypto" name="new_value" value="<?php echo $playerDetails['money']['crypto'] ?? 0; ?>" step="0.01" min="0" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mt-4">
+                                                            <button type="submit" class="btn btn-primary">Set Crypto Amount</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </form>
                                         </div>
-                                    </form>
+                                        
+                                        <!-- Add Crypto -->
+                                        <div class="tab-pane fade" id="add-crypto" role="tabpanel">
+                                            <form method="post" action="">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
+                                                <input type="hidden" name="target_table" value="players">
+                                                <input type="hidden" name="field" value="money">
+                                                <input type="hidden" name="subfield" value="crypto">
+                                                <input type="hidden" name="operation" value="add">
+                                                <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['crypto'] ?? 0; ?>">
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="add_crypto" class="form-label required">Amount to Add</label>
+                                                        <input type="number" class="form-control bg-dark text-light border-secondary" id="add_crypto" name="add_value" step="0.01" min="0.01" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mt-4">
+                                                            <button type="submit" class="btn btn-success">Add to Crypto</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        
+                                        <!-- Remove Crypto -->
+                                        <div class="tab-pane fade" id="remove-crypto" role="tabpanel">
+                                            <form method="post" action="">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="citizenid" value="<?php echo htmlspecialchars($citizenid); ?>">
+                                                <input type="hidden" name="target_table" value="players">
+                                                <input type="hidden" name="field" value="money">
+                                                <input type="hidden" name="subfield" value="crypto">
+                                                <input type="hidden" name="operation" value="remove">
+                                                <input type="hidden" name="old_value" value="<?php echo $playerDetails['money']['crypto'] ?? 0; ?>">
+                                                
+                                                <div class="row g-3">
+                                                    <div class="col-md-6">
+                                                        <label for="remove_crypto" class="form-label required">Amount to Remove</label>
+                                                        <input type="number" class="form-control bg-dark text-light border-secondary" id="remove_crypto" name="remove_value" step="0.01" min="0.01" max="<?php echo $playerDetails['money']['crypto'] ?? 0; ?>" required>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mt-4">
+                                                            <button type="submit" class="btn btn-danger">Remove from Crypto</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

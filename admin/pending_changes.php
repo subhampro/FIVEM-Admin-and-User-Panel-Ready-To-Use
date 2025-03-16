@@ -440,6 +440,24 @@ include_once '../includes/header.php';
     ::-webkit-scrollbar-thumb:hover {
         background: #4a4a4a;
     }
+    
+    pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: #1e1e1e !important;
+        color: #e9ecef !important;
+        font-family: "Consolas", "Monaco", monospace;
+        padding: 10px !important;
+    }
+    
+    .change-details {
+        background-color: #2a2e32;
+        border-top: 1px dashed #495057;
+        margin-top: 10px;
+        padding-top: 10px;
+    }
 </style>
 
 <div class="container-fluid">
@@ -644,12 +662,13 @@ include_once '../includes/header.php';
                                 <thead>
                                     <tr>
                                         <th class="text-center" width="5%">ID</th>
-                                        <th width="15%">Admin</th>
-                                        <th width="10%">Table</th>
-                                        <th width="15%">Target ID</th>
-                                        <th width="15%">Field</th>
-                                        <th width="15%">Requested</th>
-                                        <th class="text-center" width="10%">Status</th>
+                                        <th width="10%">Admin</th>
+                                        <th width="8%">Table</th>
+                                        <th width="12%">Target ID</th>
+                                        <th width="12%">Field</th>
+                                        <th width="8%">Operation</th>
+                                        <th width="12%">Requested</th>
+                                        <th class="text-center" width="8%">Status</th>
                                         <th class="text-center" width="15%">Actions</th>
                                     </tr>
                                 </thead>
@@ -661,6 +680,7 @@ include_once '../includes/header.php';
                                             <td><span class="badge bg-secondary"><?php echo htmlspecialchars($change['target_table']); ?></span></td>
                                             <td class="text-truncate" style="max-width: 150px;" title="<?php echo htmlspecialchars($change['target_id']); ?>"><?php echo htmlspecialchars($change['target_id']); ?></td>
                                             <td class="text-truncate" style="max-width: 150px;" title="<?php echo htmlspecialchars($change['field_name']); ?>"><?php echo htmlspecialchars($change['field_name']); ?></td>
+                                            <td><?php echo htmlspecialchars($change['operation']); ?></td>
                                             <td><?php echo date('Y-m-d H:i', strtotime($change['created_at'])); ?></td>
                                             <td class="text-center">
                                                 <?php if ($change['status'] === 'pending'): ?>
@@ -679,6 +699,7 @@ include_once '../includes/header.php';
                                                             data-table="<?php echo htmlspecialchars($change['target_table']); ?>"
                                                             data-target="<?php echo htmlspecialchars($change['target_id']); ?>"
                                                             data-field="<?php echo htmlspecialchars($change['field_name']); ?>"
+                                                            data-operation="<?php echo htmlspecialchars($change['operation'] ?? 'set'); ?>"
                                                             data-old="<?php echo htmlspecialchars($change['old_value']); ?>"
                                                             data-new="<?php echo htmlspecialchars($change['new_value']); ?>"
                                                             data-status="<?php echo $change['status']; ?>"
@@ -811,6 +832,10 @@ include_once '../includes/header.php';
                                 <td id="viewField"></td>
                             </tr>
                             <tr>
+                                <th>Operation</th>
+                                <td id="viewOperation"></td>
+                            </tr>
+                            <tr>
                                 <th>Created</th>
                                 <td id="viewCreated"></td>
                             </tr>
@@ -845,7 +870,7 @@ include_once '../includes/header.php';
                         <pre id="viewOldValue" class="mb-0 bg-dark text-light p-2 border border-secondary rounded"></pre>
                     </div>
                     <div class="col-md-6">
-                        <h6>New Value</h6>
+                        <h6 id="newValueHeader">New Value</h6>
                         <pre id="viewNewValue" class="mb-0 bg-dark text-light p-2 border border-secondary rounded"></pre>
                     </div>
                 </div>
@@ -923,13 +948,14 @@ include_once '../includes/header.php';
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
-    // View change modal
+    // View change details
     $('.view-change').click(function() {
         const id = $(this).data('id');
         const admin = $(this).data('admin');
         const table = $(this).data('table');
         const target = $(this).data('target');
         const field = $(this).data('field');
+        const operation = $(this).data('operation');
         const oldValue = $(this).data('old');
         const newValue = $(this).data('new');
         const status = $(this).data('status');
@@ -938,15 +964,15 @@ $(document).ready(function() {
         const reviewed = $(this).data('reviewed');
         const comments = $(this).data('comments');
         
-        // Set modal values
         $('#viewId').text(id);
         $('#viewAdmin').text(admin);
         $('#viewTable').text(table);
         $('#viewTarget').text(target);
         $('#viewField').text(field);
+        $('#viewOperation').text(operation);
         $('#viewCreated').text(created);
         
-        // Format status with badge
+        // Format the status with badge
         let statusHtml = '';
         if (status === 'pending') {
             statusHtml = '<span class="badge bg-warning text-dark">Pending</span>';
@@ -955,26 +981,69 @@ $(document).ready(function() {
         } else {
             statusHtml = '<span class="badge bg-danger">Rejected</span>';
         }
-        $('#viewStatus').html(statusHtml);
         
-        // Set review info
+        $('#viewStatus').html(statusHtml);
         $('#viewReviewer').text(reviewer);
         $('#viewReviewed').text(reviewed);
         $('#viewComments').text(comments);
         
-        // Set values
-        try {
-            // Try to parse as JSON for pretty display
-            const oldJson = JSON.parse(oldValue);
-            $('#viewOldValue').text(JSON.stringify(oldJson, null, 2));
-        } catch (e) {
-            $('#viewOldValue').text(oldValue);
+        // Update header based on operation type
+        if (operation === 'add') {
+            $('#newValueHeader').html('Result <small class="text-muted">(Amount to Add)</small>');
+        } else if (operation === 'remove') {
+            $('#newValueHeader').html('Result <small class="text-muted">(Amount to Remove)</small>');
+        } else {
+            $('#newValueHeader').text('New Value');
         }
         
+        // Handle different display formats based on operation type
         try {
-            const newJson = JSON.parse(newValue);
-            $('#viewNewValue').text(JSON.stringify(newJson, null, 2));
+            // Try to parse the values as JSON
+            let oldValueFormatted = oldValue;
+            let newValueFormatted = newValue;
+            
+            // Money fields are often numeric, so try to handle numeric values for add/remove operations
+            if (field.startsWith('money.') && !isNaN(parseFloat(oldValue)) && !isNaN(parseFloat(newValue))) {
+                const oldNum = parseFloat(oldValue);
+                const newNum = parseFloat(newValue);
+                
+                oldValueFormatted = oldNum.toFixed(2);
+                
+                if (operation === 'add') {
+                    // For add, show the resulting value (old + new)
+                    const resultValue = oldNum + newNum;
+                    newValueFormatted = resultValue.toFixed(2) + "\n\n<div class='change-details'><strong>Change Details:</strong>\n<table class='mt-2'><tr><td>Current Value:</td><td>" + oldNum.toFixed(2) + "</td></tr><tr><td>Amount Added:</td><td class='text-success'>+" + newNum.toFixed(2) + "</td></tr><tr><td>Final Result:</td><td class='text-primary'>" + resultValue.toFixed(2) + "</td></tr></table></div>";
+                } else if (operation === 'remove') {
+                    // For remove, show the resulting value (old - new)
+                    const resultValue = Math.max(0, oldNum - newNum);
+                    newValueFormatted = resultValue.toFixed(2) + "\n\n<div class='change-details'><strong>Change Details:</strong>\n<table class='mt-2'><tr><td>Current Value:</td><td>" + oldNum.toFixed(2) + "</td></tr><tr><td>Amount Removed:</td><td class='text-danger'>-" + newNum.toFixed(2) + "</td></tr><tr><td>Final Result:</td><td class='text-primary'>" + resultValue.toFixed(2) + "</td></tr></table></div>";
+                } else {
+                    // For set, just show the new value
+                    newValueFormatted = newNum.toFixed(2);
+                }
+            } else {
+                try {
+                    // Try to parse and prettify as JSON
+                    const oldObj = JSON.parse(oldValue);
+                    oldValueFormatted = JSON.stringify(oldObj, null, 2);
+                } catch (e) {
+                    // Not JSON, use as is
+                }
+                
+                try {
+                    // Try to parse and prettify as JSON
+                    const newObj = JSON.parse(newValue);
+                    newValueFormatted = JSON.stringify(newObj, null, 2);
+                } catch (e) {
+                    // Not JSON, use as is
+                }
+            }
+            
+            $('#viewOldValue').text(oldValueFormatted);
+            $('#viewNewValue').html(newValueFormatted);
         } catch (e) {
+            // Fallback to original values if any error
+            $('#viewOldValue').text(oldValue);
             $('#viewNewValue').text(newValue);
         }
     });

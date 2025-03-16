@@ -23,13 +23,14 @@ class PendingChanges {
      * @param string $fieldName The field name being changed
      * @param mixed $oldValue The original value
      * @param mixed $newValue The new value
+     * @param string $operation The operation type (set, add, remove)
      * @return int|bool The ID of the new pending change or false on failure
      */
-    public function addPendingChange($adminId, $targetTable, $targetId, $fieldName, $oldValue, $newValue) {
+    public function addPendingChange($adminId, $targetTable, $targetId, $fieldName, $oldValue, $newValue, $operation = 'set') {
         try {
             // Prepare the statement
-            $stmt = $this->conn->prepare("INSERT INTO pending_changes (admin_id, target_table, target_id, field_name, old_value, new_value, status, created_at) 
-                                         VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())");
+            $stmt = $this->conn->prepare("INSERT INTO pending_changes (admin_id, target_table, target_id, field_name, old_value, new_value, operation, status, created_at) 
+                                         VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW())");
             
             if (!$stmt) {
                 error_log("Failed to prepare statement for pending change: " . $this->conn->error);
@@ -38,7 +39,7 @@ class PendingChanges {
             
             // Bind parameters
             $status = 'pending';
-            $stmt->bind_param('isssss', $adminId, $targetTable, $targetId, $fieldName, $oldValue, $newValue);
+            $stmt->bind_param('issssss', $adminId, $targetTable, $targetId, $fieldName, $oldValue, $newValue, $operation);
             
             // Execute statement
             $result = $stmt->execute();
@@ -52,7 +53,7 @@ class PendingChanges {
             $insertId = $this->conn->insert_id;
             
             if ($insertId) {
-                error_log("Successfully added pending change #{$insertId} for {$targetTable}.{$fieldName}");
+                error_log("Successfully added pending change #{$insertId} for {$targetTable}.{$fieldName} with operation: {$operation}");
                 return $insertId;
             } else {
                 error_log("Warning: Pending change for {$targetTable}.{$fieldName} was inserted but no ID was returned");
@@ -258,8 +259,9 @@ class PendingChanges {
             $targetId = $change['target_id'];
             $fieldName = $change['field_name'];
             $newValue = $change['new_value'];
+            $operation = $change['operation'] ?? 'set'; // Default to 'set' if not specified
             
-            error_log("Applying change to {$targetTable}.{$fieldName} for ID {$targetId}");
+            error_log("Applying change to {$targetTable}.{$fieldName} for ID {$targetId} with operation: {$operation}");
             
             // Check if this is a JSON field with subfield
             $parts = explode('.', $fieldName);
@@ -324,10 +326,39 @@ class PendingChanges {
                             }
                         }
                         
-                        // Update the subfield
+                        // Update the subfield based on operation type
                         if (is_array($jsonData)) {
-                            $jsonData[$subField] = $newValue;
-                            error_log("Updated JSON subfield {$subField} in {$mainField}");
+                            // Get current value for the field
+                            $currentValue = isset($jsonData[$subField]) ? floatval($jsonData[$subField]) : 0;
+                            
+                            // Apply the operation
+                            switch ($operation) {
+                                case 'set':
+                                    // Direct set operation
+                                    $jsonData[$subField] = $newValue;
+                                    error_log("Set JSON subfield {$subField} in {$mainField} to {$newValue}");
+                                    break;
+                                    
+                                case 'add':
+                                    // Add operation - add the new value to current value
+                                    $addAmount = floatval($newValue);
+                                    $jsonData[$subField] = $currentValue + $addAmount;
+                                    error_log("Added {$addAmount} to {$subField} in {$mainField}, new value: {$jsonData[$subField]}");
+                                    break;
+                                    
+                                case 'remove':
+                                    // Remove operation - subtract the new value from current value
+                                    $removeAmount = floatval($newValue);
+                                    $jsonData[$subField] = max(0, $currentValue - $removeAmount); // Ensure we don't go below 0
+                                    error_log("Removed {$removeAmount} from {$subField} in {$mainField}, new value: {$jsonData[$subField]}");
+                                    break;
+                                    
+                                default:
+                                    // Default to set operation
+                                    $jsonData[$subField] = $newValue;
+                                    error_log("Unknown operation '{$operation}', defaulting to set for {$subField} in {$mainField}");
+                                    break;
+                            }
                             
                             // Update the record
                             $updateQuery = "UPDATE {$targetTable} SET {$mainField} = ? WHERE citizenid = ?";

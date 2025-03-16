@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS `pending_changes` (
   `field_name` varchar(50) NOT NULL,
   `old_value` text DEFAULT NULL,
   `new_value` text DEFAULT NULL,
+  `operation` enum('set','add','remove') NOT NULL DEFAULT 'set',
   `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `reviewer_id` int(11) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
