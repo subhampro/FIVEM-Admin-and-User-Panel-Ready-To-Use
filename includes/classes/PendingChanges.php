@@ -26,24 +26,31 @@ class PendingChanges {
      * @return int|bool The ID of the new pending change or false on failure
      */
     public function addPendingChange($adminId, $targetTable, $targetId, $fieldName, $oldValue, $newValue) {
-        $query = "INSERT INTO pending_changes (admin_id, target_table, target_id, field_name, old_value, new_value, status, created_at) 
-                  VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
-        
-        $params = [
-            $adminId,
-            $targetTable,
-            $targetId,
-            $fieldName,
-            $oldValue,
-            $newValue
-        ];
-        
-        $result = $this->db->execute($query, $params);
-        if ($result) {
-            return $this->conn->insert_id;
+        try {
+            $query = "INSERT INTO pending_changes (admin_id, target_table, target_id, field_name, old_value, new_value, status, created_at) 
+                      VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
+            
+            $params = [
+                $adminId,
+                $targetTable,
+                $targetId,
+                $fieldName,
+                $oldValue,
+                $newValue
+            ];
+            
+            $result = $this->db->query($query, $params);
+            if ($result) {
+                error_log("Successfully added pending change for {$targetTable}.{$fieldName}");
+                return $this->conn->insert_id;
+            }
+            
+            error_log("Failed to add pending change for {$targetTable}.{$fieldName}");
+            return false;
+        } catch (Exception $e) {
+            error_log("Exception in addPendingChange: " . $e->getMessage());
+            throw $e;
         }
-        
-        return false;
     }
     
     /**
@@ -115,15 +122,19 @@ class PendingChanges {
             // Get the pending change
             $change = $this->getPendingChangeById($id);
             
-            if (!$change || $change['status'] !== 'pending') {
-                throw new Exception("Pending change not found or already processed");
+            if (!$change) {
+                throw new Exception("Pending change #{$id} not found");
+            }
+            
+            if ($change['status'] !== 'pending') {
+                throw new Exception("Pending change #{$id} already processed with status: {$change['status']}");
             }
             
             // Apply the change to the target table
             $success = $this->applyChange($change);
             
             if (!$success) {
-                throw new Exception("Failed to apply change to database");
+                throw new Exception("Failed to apply change to database for change #{$id}");
             }
             
             // Update the pending change status
@@ -140,20 +151,21 @@ class PendingChanges {
                 $id
             ];
             
-            $result = $this->db->execute($updateQuery, $updateParams);
+            $result = $this->db->query($updateQuery, $updateParams);
             
             if (!$result) {
-                throw new Exception("Failed to update pending change status");
+                throw new Exception("Failed to update pending change status for change #{$id}");
             }
             
             // Commit transaction
             $this->conn->commit();
+            error_log("Successfully approved change #{$id}");
             return true;
         } catch (Exception $e) {
             // Rollback transaction on error
             $this->conn->rollback();
-            error_log("Error approving change: " . $e->getMessage());
-            return false;
+            error_log("Error approving change #{$id}: " . $e->getMessage());
+            throw $e;
         }
     }
     
@@ -166,20 +178,32 @@ class PendingChanges {
      * @return bool True on success, false on failure
      */
     public function rejectChange($id, $reviewerId, $comments = '') {
-        $query = "UPDATE pending_changes SET 
-                  status = 'rejected', 
-                  reviewer_id = ?, 
-                  reviewed_at = NOW(), 
-                  review_comments = ? 
-                  WHERE id = ? AND status = 'pending'";
-        
-        $params = [
-            $reviewerId,
-            $comments,
-            $id
-        ];
-        
-        return $this->db->execute($query, $params);
+        try {
+            $query = "UPDATE pending_changes SET 
+                      status = 'rejected', 
+                      reviewer_id = ?, 
+                      reviewed_at = NOW(), 
+                      review_comments = ? 
+                      WHERE id = ? AND status = 'pending'";
+            
+            $params = [
+                $reviewerId,
+                $comments,
+                $id
+            ];
+            
+            $result = $this->db->query($query, $params);
+            if (!$result) {
+                error_log("Failed to reject change #{$id}");
+                return false;
+            }
+            
+            error_log("Successfully rejected change #{$id}");
+            return true;
+        } catch (Exception $e) {
+            error_log("Exception in rejectChange: " . $e->getMessage());
+            throw $e;
+        }
     }
     
     /**
@@ -195,6 +219,8 @@ class PendingChanges {
             $fieldName = $change['field_name'];
             $newValue = $change['new_value'];
             
+            error_log("Applying change to {$targetTable}.{$fieldName} for ID {$targetId}");
+            
             // Check if this is a JSON field with subfield
             $parts = explode('.', $fieldName);
             $mainField = $parts[0];
@@ -206,8 +232,10 @@ class PendingChanges {
                     // Connect to game database
                     $gameDb = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, 'elapsed2_0');
                     if ($gameDb->connect_error) {
-                        throw new Exception("Failed to connect to game database");
+                        throw new Exception("Failed to connect to game database: " . $gameDb->connect_error);
                     }
+                    
+                    error_log("Connected to game database for applying change");
                     
                     // Different handling for different fields
                     if ($subField) {
@@ -215,65 +243,92 @@ class PendingChanges {
                         // Get the current data
                         $query = "SELECT {$mainField} FROM {$targetTable} WHERE citizenid = ?";
                         $stmt = $gameDb->prepare($query);
+                        if (!$stmt) {
+                            throw new Exception("Failed to prepare query: " . $gameDb->error);
+                        }
+                        
                         $stmt->bind_param('s', $targetId);
                         $stmt->execute();
                         $result = $stmt->get_result();
                         $row = $result->fetch_assoc();
                         
                         if (!$row) {
-                            throw new Exception("Player not found");
+                            throw new Exception("Player with citizenid {$targetId} not found");
                         }
+                        
+                        error_log("Retrieved current data for {$mainField}");
                         
                         // Parse the JSON data
                         $jsonData = json_decode($row[$mainField], true);
                         if (!$jsonData && $row[$mainField]) {
                             $jsonData = $row[$mainField]; // Handle non-JSON data or invalid JSON
+                            error_log("Warning: Field {$mainField} is not valid JSON, treating as raw data");
                         }
                         
                         // Update the subfield
                         if (is_array($jsonData)) {
                             $jsonData[$subField] = $newValue;
+                            error_log("Updated JSON subfield {$subField} in {$mainField}");
                             
                             // Update the record
                             $updateQuery = "UPDATE {$targetTable} SET {$mainField} = ? WHERE citizenid = ?";
                             $stmt = $gameDb->prepare($updateQuery);
+                            if (!$stmt) {
+                                throw new Exception("Failed to prepare update query: " . $gameDb->error);
+                            }
+                            
                             $jsonString = json_encode($jsonData);
                             $stmt->bind_param('ss', $jsonString, $targetId);
                             $result = $stmt->execute();
                             
                             if (!$result) {
-                                throw new Exception("Failed to update JSON field");
+                                throw new Exception("Failed to update JSON field: " . $stmt->error);
                             }
+                            
+                            error_log("Successfully updated JSON field {$mainField}.{$subField}");
                         } else {
                             // Special handling for money field which is stored as a string in DB but used as JSON in PHP
                             if ($mainField === 'money') {
                                 // Assuming money is stored as JSON string
                                 $moneyData = json_decode($row[$mainField], true) ?: [];
                                 $moneyData[$subField] = (float)$newValue;
+                                error_log("Updated money subfield {$subField}");
                                 
                                 $updateQuery = "UPDATE {$targetTable} SET {$mainField} = ? WHERE citizenid = ?";
                                 $stmt = $gameDb->prepare($updateQuery);
+                                if (!$stmt) {
+                                    throw new Exception("Failed to prepare money update query: " . $gameDb->error);
+                                }
+                                
                                 $jsonString = json_encode($moneyData);
                                 $stmt->bind_param('ss', $jsonString, $targetId);
                                 $result = $stmt->execute();
                                 
                                 if (!$result) {
-                                    throw new Exception("Failed to update money field");
+                                    throw new Exception("Failed to update money field: " . $stmt->error);
                                 }
+                                
+                                error_log("Successfully updated money field {$mainField}.{$subField}");
                             } else {
-                                throw new Exception("Field is not valid JSON");
+                                throw new Exception("Field {$mainField} is not valid JSON and not a special case field");
                             }
                         }
                     } else {
                         // Direct field update
                         $updateQuery = "UPDATE {$targetTable} SET {$fieldName} = ? WHERE citizenid = ?";
                         $stmt = $gameDb->prepare($updateQuery);
+                        if (!$stmt) {
+                            throw new Exception("Failed to prepare direct update query: " . $gameDb->error);
+                        }
+                        
                         $stmt->bind_param('ss', $newValue, $targetId);
                         $result = $stmt->execute();
                         
                         if (!$result) {
-                            throw new Exception("Failed to update field");
+                            throw new Exception("Failed to update field {$fieldName}: " . $stmt->error);
                         }
+                        
+                        error_log("Successfully updated direct field {$fieldName}");
                     }
                     
                     $gameDb->close();
@@ -283,10 +338,11 @@ class PendingChanges {
                     throw new Exception("Unsupported target table: {$targetTable}");
             }
             
+            error_log("Successfully applied change to {$targetTable}.{$fieldName} for ID {$targetId}");
             return true;
         } catch (Exception $e) {
             error_log("Error applying change: " . $e->getMessage());
-            return false;
+            throw $e;
         }
     }
 }

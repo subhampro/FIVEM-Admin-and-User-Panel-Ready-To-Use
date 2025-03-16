@@ -33,9 +33,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Process based on action
             if ($action === 'approve') {
-                $result = $pendingChanges->approveChange($changeId, $_SESSION['user_id'], $comments);
-                
-                if ($result) {
+                try {
+                    $result = $pendingChanges->approveChange($changeId, $_SESSION['user_id'], $comments);
+                    
                     $logger->logAction(
                         $_SESSION['user_id'],
                         'approve_change',
@@ -44,28 +44,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     $message = 'Change has been approved and applied to the database.';
                     $messageType = 'success';
-                } else {
-                    $message = 'Failed to approve the change. Please try again.';
+                } catch (Exception $e) {
+                    $message = 'Error: ' . $e->getMessage();
                     $messageType = 'danger';
+                    error_log("Error in pending_changes.php (approve): " . $e->getMessage());
                 }
             } elseif ($action === 'reject') {
-                $result = $pendingChanges->rejectChange($changeId, $_SESSION['user_id'], $comments);
-                
-                if ($result) {
-                    $logger->logAction(
-                        $_SESSION['user_id'],
-                        'reject_change',
-                        "Rejected change #{$changeId} for {$changeDetails['target_table']}.{$changeDetails['field_name']} on {$changeDetails['target_id']}"
-                    );
+                try {
+                    $result = $pendingChanges->rejectChange($changeId, $_SESSION['user_id'], $comments);
                     
-                    $message = 'Change has been rejected.';
-                    $messageType = 'success';
-                } else {
-                    $message = 'Failed to reject the change. Please try again.';
+                    if ($result) {
+                        $logger->logAction(
+                            $_SESSION['user_id'],
+                            'reject_change',
+                            "Rejected change #{$changeId} for {$changeDetails['target_table']}.{$changeDetails['field_name']} on {$changeDetails['target_id']}"
+                        );
+                        
+                        $message = 'Change has been rejected and will not be applied to the database.';
+                        $messageType = 'warning';
+                    } else {
+                        $message = 'Failed to reject the change. Please try again.';
+                        $messageType = 'danger';
+                    }
+                } catch (Exception $e) {
+                    $message = 'Error: ' . $e->getMessage();
                     $messageType = 'danger';
+                    error_log("Error in pending_changes.php (reject): " . $e->getMessage());
                 }
             } else {
-                $message = 'Invalid action.';
+                $message = 'Invalid action. Please try again.';
                 $messageType = 'danger';
             }
         }
@@ -179,8 +186,9 @@ include_once '../includes/header.php';
             </div>
             
             <?php if (!empty($message)): ?>
-                <div class="alert alert-<?php echo $messageType; ?>" role="alert">
+                <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show" role="alert">
                     <?php echo $message; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
             
@@ -438,6 +446,9 @@ include_once '../includes/header.php';
             <form method="post" action="">
                 <div class="modal-body">
                     <p>Are you sure you want to approve this change? This will apply the change to the database.</p>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i> Approving this change will immediately update the game database with the new value.
+                    </div>
                     <input type="hidden" name="action" value="approve">
                     <input type="hidden" name="change_id" id="approveChangeId">
                     
@@ -466,6 +477,9 @@ include_once '../includes/header.php';
             <form method="post" action="">
                 <div class="modal-body">
                     <p>Are you sure you want to reject this change?</p>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i> Rejecting this change will permanently cancel it. The change will not be applied to the database.
+                    </div>
                     <input type="hidden" name="action" value="reject">
                     <input type="hidden" name="change_id" id="rejectChangeId">
                     

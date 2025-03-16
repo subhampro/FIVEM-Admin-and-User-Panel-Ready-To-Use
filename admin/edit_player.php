@@ -64,28 +64,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $messageType = 'warning';
     } else {
         // Add the change to pending_changes table
-        $result = $pendingChanges->addPendingChange(
-            $_SESSION['user_id'],
-            $targetTable,
-            $citizenid,
-            $field . ($subfield ? '.' . $subfield : ''),
-            $oldValue,
-            $newValue
-        );
-        
-        if ($result) {
-            // Log the action
-            $logger->logAction(
+        try {
+            $result = $pendingChanges->addPendingChange(
                 $_SESSION['user_id'],
-                'edit_player_request',
-                "Requested edit for player {$citizenid}, field: {$field}" . ($subfield ? ".{$subfield}" : "") . ", old: {$oldValue}, new: {$newValue}"
+                $targetTable,
+                $citizenid,
+                $field . ($subfield ? '.' . $subfield : ''),
+                $oldValue,
+                $newValue
             );
             
-            $message = 'Edit request submitted for approval. The change will take effect after it has been approved.';
-            $messageType = 'success';
-        } else {
-            $message = 'Failed to submit the edit request. Please try again.';
+            if ($result) {
+                // Log the action
+                $logger->logAction(
+                    $_SESSION['user_id'],
+                    'edit_player_request',
+                    "Requested edit for player {$citizenid}, field: {$field}" . ($subfield ? ".{$subfield}" : "") . ", old: {$oldValue}, new: {$newValue}"
+                );
+                
+                $message = 'Edit request submitted for approval. The change will take effect after it has been approved.';
+                $messageType = 'success';
+            } else {
+                $message = 'Failed to submit the edit request. Please try again.';
+                $messageType = 'danger';
+            }
+        } catch (Exception $e) {
+            $message = 'Error: ' . $e->getMessage();
             $messageType = 'danger';
+            error_log("Error in edit_player.php: " . $e->getMessage());
         }
     }
 }
@@ -272,13 +278,18 @@ $pageTitle = 'Edit ' . $playerName . ' - Admin Dashboard';
             </div>
             
             <?php if (!empty($message)): ?>
-                <div class="alert alert-<?php echo $messageType; ?>" role="alert">
+                <div class="alert alert-<?php echo $messageType; ?> alert-dismissible fade show" role="alert">
                     <?php echo $message; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
             
             <div class="alert alert-info mb-4">
-                <i class="fas fa-info-circle me-2"></i> All changes made here will require approval from a Level 3 administrator before they take effect in the game.
+                <i class="fas fa-info-circle me-2"></i> All changes made here will require approval from a Level 3 administrator before they take effect in the game. Changes will be queued in the <strong>Pending Changes</strong> system.
+                <hr>
+                <p class="mb-0">
+                    <strong>Important:</strong> Editing player data can affect gameplay. Please ensure all changes are accurate and necessary.
+                </p>
             </div>
             
             <div class="card mb-4">
