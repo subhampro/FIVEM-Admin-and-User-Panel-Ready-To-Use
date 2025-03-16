@@ -316,7 +316,12 @@ $pageTitle = 'Player Management - Admin Dashboard';
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
                         <a href="index.php" class="nav-link">
-                            <i class="fas fa-home me-2"></i> Dashboard
+                            <i class="fas fa-home me-2"></i> Admin Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../user/index.php" class="nav-link">
+                            <i class="fas fa-tachometer-alt me-2"></i> User Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
@@ -399,8 +404,8 @@ $pageTitle = 'Player Management - Admin Dashboard';
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <a href="players.php" class="btn btn-outline-secondary w-100">
-                                <i class="fas fa-redo"></i> Reset
+                            <a href="allplayers.php" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-users"></i> All Players
                             </a>
                         </div>
                     </div>
@@ -570,6 +575,30 @@ $pageTitle = 'Player Management - Admin Dashboard';
                                                         echo ($charInfo && isset($charInfo['phone'])) 
                                                             ? htmlspecialchars($charInfo['phone']) 
                                                             : 'N/A'; 
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">Position (x,y,z)</th>
+                                                    <td>
+                                                        <?php 
+                                                        if (isset($playerDetails['basic']['position'])) {
+                                                            $positionJson = $playerDetails['basic']['position'];
+                                                            $position = json_decode($positionJson, true);
+                                                            
+                                                            if ($position && isset($position['x'], $position['y'], $position['z'])) {
+                                                                // Format with 2 decimal places
+                                                                $x = number_format($position['x'], 2);
+                                                                $y = number_format($position['y'], 2);
+                                                                $z = number_format($position['z'], 2);
+                                                                
+                                                                echo "$x, $y, $z";
+                                                            } else {
+                                                                echo 'N/A';
+                                                            }
+                                                        } else {
+                                                            echo 'N/A';
+                                                        }
                                                         ?>
                                                     </td>
                                                 </tr>

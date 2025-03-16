@@ -181,7 +181,12 @@ ensurePendingChangesTable();
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
                         <a href="index.php" class="nav-link active">
-                            <i class="fas fa-home me-2"></i> Dashboard
+                            <i class="fas fa-home me-2"></i> Admin Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="../user/index.php" class="nav-link">
+                            <i class="fas fa-tachometer-alt me-2"></i> User Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
@@ -234,16 +239,53 @@ ensurePendingChangesTable();
             <!-- Page Header -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Admin Dashboard</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="../logout.php" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-sign-out-alt me-1"></i> Logout
+                        </a>
+                    </div>
+                </div>
             </div>
-
-            <?php if (isAdmin('admin_level1') && !isAdmin('admin_level2')): ?>
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle me-2"></i> Welcome to the Admin Panel (Level 1). You have view-only access to player data. Use the Players section to search and view player information.
+            
+            <!-- Search Players Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-search me-2"></i> Quick Player Search</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get" action="players.php" class="mb-0">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Search for players...">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <select name="field" class="form-select">
+                                    <option value="name">Name</option>
+                                    <option value="citizenid">Citizen ID</option>
+                                    <option value="license">License</option>
+                                    <option value="phone">Phone</option>
+                                    <option value="steam">Steam ID</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="allplayers.php" class="btn btn-outline-secondary w-100">
+                                    <i class="fas fa-users"></i> All Players
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <?php endif; ?>
-
-            <!-- Stats Cards -->
+            
+            <!-- Dashboard Content -->
             <div class="row">
+                <!-- Statistics Cards -->
                 <div class="col-xl-3 col-md-6 mb-4">
                     <div class="card border-left-primary shadow h-100 py-2">
                         <div class="card-body">
