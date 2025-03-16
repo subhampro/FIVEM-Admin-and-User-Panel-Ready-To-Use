@@ -347,5 +347,21 @@ class Admin {
         
         return $result['count'];
     }
+    
+    /**
+     * Get recent activity logs
+     * 
+     * @param int $limit Number of logs to retrieve
+     * @return array|false Array of logs or false on failure
+     */
+    public function getRecentLogs($limit = 10) {
+        $query = "SELECT al.*, wu.username 
+                 FROM action_logs al 
+                 LEFT JOIN website_users wu ON al.user_id = wu.id 
+                 ORDER BY al.timestamp DESC 
+                 LIMIT ?";
+        
+        return $this->db->getAll($query, [$limit]);
+    }
 }
 ?> 

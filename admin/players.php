@@ -498,6 +498,12 @@ $pageTitle = 'Player Management - Admin Dashboard';
                                 : 'Player Details'; 
                             ?> 
                             <span class="text-muted">(<?php echo htmlspecialchars($citizenid); ?>)</span>
+                            
+                            <?php if (isAdmin('admin_level2')): ?>
+                            <a href="edit_player.php?citizenid=<?php echo urlencode($citizenid); ?>" class="btn btn-sm btn-primary float-end">
+                                <i class="fas fa-edit me-1"></i> Edit Player
+                            </a>
+                            <?php endif; ?>
                         </h5>
                     </div>
                     <div class="card-body">
