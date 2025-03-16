@@ -105,8 +105,16 @@ class Player {
         }
         
         try {
-            // Clean and prepare search term
-            $searchTerm = '%' . $this->gameDb->real_escape_string($searchTerm) . '%';
+            // Clean search term
+            $cleanTerm = $this->gameDb->real_escape_string($searchTerm);
+            
+            // Create search term with wildcards
+            $searchTermLike = '%' . $cleanTerm . '%';
+            
+            // For JSON_EXTRACT, we need to add quotes to the search term
+            // This is because JSON_EXTRACT returns quoted strings for path expressions
+            $jsonSearchTerm = '%"' . $cleanTerm . '%';
+            $jsonUnquotedSearchTerm = '%' . $cleanTerm . '%';
             
             $query = "";
             $params = [];
@@ -116,59 +124,74 @@ class Player {
             switch($field) {
                 case 'citizenid':
                     $query = "SELECT * FROM players WHERE citizenid LIKE ?";
-                    $params[] = $searchTerm;
+                    $params[] = $searchTermLike;
                     $types .= "s";
                     break;
+                    
                 case 'license':
                     $query = "SELECT * FROM players WHERE license LIKE ?";
-                    $params[] = $searchTerm;
+                    $params[] = $searchTermLike;
                     $types .= "s";
                     break;
+                    
                 case 'name':
+                    // For name search, we search in both the 'name' column and JSON charinfo
                     $query = "SELECT * FROM players WHERE 
                              name LIKE ? OR 
-                             JSON_EXTRACT(charinfo, '$.firstname') LIKE ? OR 
-                             JSON_EXTRACT(charinfo, '$.lastname') LIKE ?";
-                    $params[] = $searchTerm;
-                    $params[] = $searchTerm;
-                    $params[] = $searchTerm;
+                             charinfo LIKE ? OR
+                             LOWER(CONCAT(
+                                 JSON_UNQUOTE(JSON_EXTRACT(charinfo, '$.firstname')), 
+                                 ' ', 
+                                 JSON_UNQUOTE(JSON_EXTRACT(charinfo, '$.lastname'))
+                             )) LIKE LOWER(?)";
+                    $params[] = $searchTermLike;
+                    $params[] = $jsonSearchTerm;
+                    $params[] = $searchTermLike;
                     $types .= "sss";
                     break;
+                    
                 case 'phone':
-                    $query = "SELECT * FROM players WHERE JSON_EXTRACT(charinfo, '$.phone') LIKE ?";
-                    $params[] = $searchTerm;
-                    $types .= "s";
+                    $query = "SELECT * FROM players WHERE charinfo LIKE ? OR JSON_UNQUOTE(JSON_EXTRACT(charinfo, '$.phone')) LIKE ?";
+                    $params[] = $jsonSearchTerm;
+                    $params[] = $searchTermLike;
+                    $types .= "ss";
                     break;
+                    
                 case 'steam':
                     $query = "SELECT * FROM players WHERE 
                              steam LIKE ? OR 
                              identifier LIKE ?";
-                    $params[] = $searchTerm;
-                    $params[] = $searchTerm;
+                    $params[] = $searchTermLike;
+                    $params[] = $searchTermLike;
                     $types .= "ss";
                     break;
+                    
                 case 'all':
                 default:
-                    // Fix for all fields search - use JSON_EXTRACT for proper JSON field searching
+                    // Super simple implementation - just search in basic columns and a simple LIKE on charinfo
                     $query = "SELECT * FROM players WHERE 
                              citizenid LIKE ? OR 
                              license LIKE ? OR 
-                             name LIKE ? OR 
-                             JSON_EXTRACT(charinfo, '$.firstname') LIKE ? OR 
-                             JSON_EXTRACT(charinfo, '$.lastname') LIKE ? OR 
-                             JSON_EXTRACT(charinfo, '$.phone') LIKE ? OR
                              steam LIKE ? OR  
-                             identifier LIKE ?";
-                    $params = array_fill(0, 8, $searchTerm);
-                    $types = str_repeat("s", 8);
+                             identifier LIKE ? OR
+                             name LIKE ? OR 
+                             charinfo LIKE ?";
+                    
+                    // Simple search term for all parameters
+                    $likeSearch = '%' . $cleanTerm . '%';
+                    $params = array_fill(0, 6, $likeSearch);
+                    $types = str_repeat("s", 6);
+                    
+                    // Log for debugging
+                    error_log("SIMPLIFIED ALL SEARCH: Using query with term: $searchTerm");
                     break;
             }
             
             // Add limit to prevent too many results
             $query .= " LIMIT 50";
             
-            // Debug log the query
-            error_log("Search query: $query with term: $searchTerm");
+            // Debug log the query and parameters
+            error_log("Search query: $query with term: $searchTerm, field: $field");
             
             // Prepare and execute statement
             $stmt = $this->gameDb->prepare($query);
@@ -183,7 +206,11 @@ class Player {
             }
             
             // Execute statement
-            $stmt->execute();
+            if (!$stmt->execute()) {
+                error_log("Execute failed: " . $stmt->error);
+                return $results;
+            }
+            
             $result = $stmt->get_result();
             
             // Fetch results
@@ -202,6 +229,9 @@ class Player {
             }
             
             $stmt->close();
+            
+            // Log the number of results found
+            error_log("Search results count: " . count($results));
         } catch (Exception $e) {
             error_log("Error searching players: " . $e->getMessage());
         }

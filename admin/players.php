@@ -391,10 +391,9 @@ $pageTitle = 'Player Management - Admin Dashboard';
                         </div>
                         <div class="col-md-4">
                             <select name="field" class="form-select">
-                                <option value="all" <?php echo $searchField === 'all' ? 'selected' : ''; ?>>All Fields</option>
+                                <option value="name" <?php echo $searchField === 'name' ? 'selected' : ''; ?>>Name</option>
                                 <option value="citizenid" <?php echo $searchField === 'citizenid' ? 'selected' : ''; ?>>Citizen ID</option>
                                 <option value="license" <?php echo $searchField === 'license' ? 'selected' : ''; ?>>License</option>
-                                <option value="name" <?php echo $searchField === 'name' ? 'selected' : ''; ?>>Name</option>
                                 <option value="phone" <?php echo $searchField === 'phone' ? 'selected' : ''; ?>>Phone</option>
                                 <option value="steam" <?php echo $searchField === 'steam' ? 'selected' : ''; ?>>Steam ID</option>
                             </select>
@@ -433,6 +432,11 @@ $pageTitle = 'Player Management - Admin Dashboard';
                                         <div>
                                             <div class="player-name"><?php echo htmlspecialchars($result['name'] ?? 'Unknown'); ?></div>
                                             <div class="player-citizenid"><?php echo htmlspecialchars($result['citizenid']); ?></div>
+                                            <?php if (isset($result['name']) && !empty($result['name'])): ?>
+                                                <div class="player-fivem-name text-info small">
+                                                    <i class="fas fa-gamepad me-1"></i> FiveM Name: <?php echo htmlspecialchars($result['name']); ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </div>
                                         <a href="?citizenid=<?php echo urlencode($result['citizenid']); ?>" class="btn btn-primary btn-sm">
                                             <i class="fas fa-eye me-1"></i> View Details
@@ -579,6 +583,16 @@ $pageTitle = 'Player Management - Admin Dashboard';
                                                 <tr>
                                                     <th scope="row">Citizen ID</th>
                                                     <td><?php echo htmlspecialchars($citizenid); ?></td>
+                                                </tr>
+                                                <tr>
+                                                    <th scope="row">FiveM Name</th>
+                                                    <td>
+                                                        <?php 
+                                                        echo isset($playerDetails['basic']['name']) 
+                                                            ? htmlspecialchars($playerDetails['basic']['name']) 
+                                                            : 'N/A'; 
+                                                        ?>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">License</th>
