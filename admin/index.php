@@ -165,6 +165,41 @@ ensurePendingChangesTable();
             background-color: #212529;
             color: #e9ecef;
         }
+        
+        /* Fix for recent activity table */
+        .table-hover tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.075);
+            color: #e9ecef;
+        }
+        
+        .table-hover tbody tr {
+            color: #e9ecef;
+        }
+        
+        .table thead th {
+            border-color: #495057;
+            color: #e9ecef;
+            background-color: #343a40;
+        }
+        
+        .table tbody td {
+            border-color: #495057;
+            color: #e9ecef;
+            background-color: #212529;
+        }
+        
+        /* Additional fixes for table background */
+        .table-hover tbody tr {
+            background-color: #212529;
+        }
+        
+        .table-responsive {
+            background-color: #212529;
+        }
+        
+        .table {
+            background-color: #212529;
+        }
     </style>
 </head>
 <body class="admin-panel">
@@ -372,14 +407,6 @@ ensurePendingChangesTable();
                         
                         <?php if (isAdmin('admin_level2')): ?>
                         <div class="col-lg-4 col-md-6 mb-3">
-                            <a href="pending_changes.php" class="btn btn-warning w-100">
-                                <i class="fas fa-clock me-2"></i> Review Pending Changes
-                                <?php if ($pendingCount > 0): ?>
-                                    <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
-                                <?php endif; ?>
-                            </a>
-                        </div>
-                        <div class="col-lg-4 col-md-6 mb-3">
                             <a href="users.php" class="btn btn-info w-100">
                                 <i class="fas fa-user-edit me-2"></i> Manage Users
                             </a>
@@ -387,6 +414,14 @@ ensurePendingChangesTable();
                         <?php endif; ?>
                         
                         <?php if (isAdmin('admin_level3')): ?>
+                        <div class="col-lg-4 col-md-6 mb-3">
+                            <a href="pending_changes.php" class="btn btn-warning w-100">
+                                <i class="fas fa-clock me-2"></i> Review Pending Changes
+                                <?php if ($pendingCount > 0): ?>
+                                    <span class="badge bg-danger ms-2"><?php echo $pendingCount; ?></span>
+                                <?php endif; ?>
+                            </a>
+                        </div>
                         <div class="col-lg-4 col-md-6 mb-3">
                             <a href="settings.php" class="btn btn-secondary w-100">
                                 <i class="fas fa-cog me-2"></i> System Settings
@@ -410,8 +445,11 @@ ensurePendingChangesTable();
             <?php if (isAdmin('admin_level2')): ?>
             <!-- Recent Activity -->
             <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-history me-1"></i> Recent Activity
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div><i class="fas fa-history me-1"></i> Recent Activity</div>
+                    <a href="all_activities.php" class="btn btn-sm btn-primary">
+                        <i class="fas fa-list me-1"></i> All Activity
+                    </a>
                 </div>
                 <div class="card-body">
                     <?php

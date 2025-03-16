@@ -15,28 +15,180 @@ class Logger {
     }
     
     /**
-     * Log an action performed by a user
+     * Log an action
      * 
-     * @param int $userId User ID who performed the action
+     * @param int $userId User ID
      * @param string $actionType Type of action
-     * @param string $actionDescription Description of action
-     * @return int|false ID of the log entry or false on failure
+     * @param string $action Description of action
+     * @param string $ipAddress IP address (optional)
+     * @return int|bool ID of the log entry or false on failure
      */
-    public function logAction($userId, $actionType, $actionDescription) {
-        // Get IP address
-        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    public function logAction($userId, $actionType, $action, $ipAddress = '') {
+        if (empty($ipAddress)) {
+            $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '::1';
+        }
         
-        // Prepare data for insertion
-        $data = [
-            'user_id' => $userId,
-            'action_type' => $actionType,
-            'action' => $actionDescription,
-            'ip_address' => $ipAddress,
-            'timestamp' => date('Y-m-d H:i:s')
-        ];
+        $timestamp = date('Y-m-d H:i:s');
         
-        // Insert into database
-        return $this->db->insert('action_logs', $data);
+        $query = "INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?)";
+        $params = [$userId, $actionType, $action, $ipAddress, $timestamp];
+        $types = 'issss';
+        
+        error_log("Executing insert query: $query with data: " . print_r($params, true));
+        error_log("Bound parameters with types: $types");
+        
+        $stmt = $this->conn->prepare($query);
+        
+        if (!$stmt) {
+            error_log("Prepare statement failed: " . $this->conn->error);
+            return false;
+        }
+        
+        $stmt->bind_param($types, ...$params);
+        $success = $stmt->execute();
+        
+        if (!$success) {
+            error_log("Execute statement failed: " . $stmt->error);
+            return false;
+        }
+        
+        $id = $stmt->insert_id;
+        $stmt->close();
+        
+        error_log("Insert successful. Last ID: $id");
+        
+        return $id;
+    }
+    
+    /**
+     * Get activity logs with pagination and search
+     * 
+     * @param string $search Search term
+     * @param string $searchField Field to search in
+     * @param int $limit Items per page
+     * @param int $offset Offset for pagination
+     * @return array Array of activity logs
+     */
+    public function getActivities($search = '', $searchField = 'all', $limit = 100, $offset = 0) {
+        $query = "SELECT al.*, wu.username 
+                FROM action_logs al 
+                LEFT JOIN website_users wu ON al.user_id = wu.id";
+        $params = [];
+        
+        // Add search conditions if search term provided
+        if (!empty($search)) {
+            if ($searchField === 'all') {
+                $query .= " WHERE (wu.username LIKE ? OR al.action_type LIKE ? OR al.action LIKE ? OR al.timestamp LIKE ?)";
+                $searchTerm = '%' . $search . '%';
+                $params = [$searchTerm, $searchTerm, $searchTerm, $searchTerm];
+            } else {
+                switch ($searchField) {
+                    case 'user':
+                        $query .= " WHERE wu.username LIKE ?";
+                        break;
+                    case 'action_type':
+                        $query .= " WHERE al.action_type LIKE ?";
+                        break;
+                    case 'action':
+                        $query .= " WHERE al.action LIKE ?";
+                        break;
+                    case 'timestamp':
+                        $query .= " WHERE al.timestamp LIKE ?";
+                        break;
+                }
+                $params = ['%' . $search . '%'];
+            }
+        }
+        
+        // Add order by and limit
+        $query .= " ORDER BY al.timestamp DESC LIMIT ?, ?";
+        $params[] = $offset;
+        $params[] = $limit;
+        
+        $stmt = $this->conn->prepare($query);
+        
+        if (!$stmt) {
+            error_log("Prepare statement failed: " . $this->conn->error);
+            return [];
+        }
+        
+        // Bind parameters
+        if (!empty($params)) {
+            $types = str_repeat('s', count($params) - 2) . 'ii'; // All string params + 2 integers for limit/offset
+            $stmt->bind_param($types, ...$params);
+        }
+        
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $activities = [];
+        
+        while ($row = $result->fetch_assoc()) {
+            $activities[] = $row;
+        }
+        
+        $stmt->close();
+        
+        return $activities;
+    }
+    
+    /**
+     * Count total activities matching search criteria
+     * 
+     * @param string $search Search term
+     * @param string $searchField Field to search in
+     * @return int Total number of activities
+     */
+    public function countActivities($search = '', $searchField = 'all') {
+        $query = "SELECT COUNT(*) as total 
+                FROM action_logs al 
+                LEFT JOIN website_users wu ON al.user_id = wu.id";
+        $params = [];
+        
+        // Add search conditions if search term provided
+        if (!empty($search)) {
+            if ($searchField === 'all') {
+                $query .= " WHERE (wu.username LIKE ? OR al.action_type LIKE ? OR al.action LIKE ? OR al.timestamp LIKE ?)";
+                $searchTerm = '%' . $search . '%';
+                $params = [$searchTerm, $searchTerm, $searchTerm, $searchTerm];
+            } else {
+                switch ($searchField) {
+                    case 'user':
+                        $query .= " WHERE wu.username LIKE ?";
+                        break;
+                    case 'action_type':
+                        $query .= " WHERE al.action_type LIKE ?";
+                        break;
+                    case 'action':
+                        $query .= " WHERE al.action LIKE ?";
+                        break;
+                    case 'timestamp':
+                        $query .= " WHERE al.timestamp LIKE ?";
+                        break;
+                }
+                $params = ['%' . $search . '%'];
+            }
+        }
+        
+        $stmt = $this->conn->prepare($query);
+        
+        if (!$stmt) {
+            error_log("Prepare statement failed: " . $this->conn->error);
+            return 0;
+        }
+        
+        // Bind parameters
+        if (!empty($params)) {
+            $types = str_repeat('s', count($params)); // All string params
+            $stmt->bind_param($types, ...$params);
+        }
+        
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        
+        $stmt->close();
+        
+        return $row ? $row['total'] : 0;
     }
     
     /**
