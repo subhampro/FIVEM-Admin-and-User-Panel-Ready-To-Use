@@ -1,0 +1,83 @@
+[16-Mar-2025 00:19:25 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:25 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:25 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:25 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 00:19:25 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:25 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:27 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:27 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:27 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:27 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:27 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:27 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:27 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:27 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function generateCsrfToken() in C:\xampp\htdocs\new\admin\player_search.php:279
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\new\admin\player_search.php on line 279
+[16-Mar-2025 00:19:30 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:30 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:30 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:30 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:30 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:30 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:30 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:30 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function generateCsrfToken() in C:\xampp\htdocs\new\admin\player_search.php:279
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\new\admin\player_search.php on line 279
+[16-Mar-2025 00:19:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:19:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:19:35 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function generateCsrfToken() in C:\xampp\htdocs\new\admin\player_search.php:279
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\new\admin\player_search.php on line 279

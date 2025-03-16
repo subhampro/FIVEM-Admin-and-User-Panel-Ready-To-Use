@@ -43,24 +43,26 @@ class Player {
     }
     
     /**
-     * Get the game database connection
+     * Get player by citizenid from game database
      * 
-     * @return mysqli|false Game database connection or false on failure
+     * @param string $citizenid Citizen ID
+     * @return array|false Player data or false if not found
      */
-    private function getGameDb() {
+    public function getPlayerByCitizenId($citizenid) {
         if (!$this->gameDb || $this->gameDb->connect_error) {
-            try {
-                $this->gameDb = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, 'elapsed2_0');
-                if ($this->gameDb->connect_error) {
-                    $this->logError("Failed to connect to game database: " . $this->gameDb->connect_error);
-                    return false;
-                }
-            } catch (Exception $e) {
-                $this->logError("Exception connecting to game database: " . $e->getMessage());
-                return false;
-            }
+            return false;
         }
-        return $this->gameDb;
+        
+        $stmt = $this->gameDb->prepare("SELECT * FROM players WHERE citizenid = ?");
+        $stmt->bind_param("s", $citizenid);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        
+        return false;
     }
     
     /**
