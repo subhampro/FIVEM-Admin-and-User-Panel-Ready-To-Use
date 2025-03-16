@@ -567,3 +567,464 @@ Stack trace:
 Stack trace:
 #0 {main}
   thrown in C:\xampp\htdocs\new\admin\player_search.php on line 328
+[16-Mar-2025 00:42:31 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:31 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:31 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:31 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:31 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:31 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:31 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function generateCsrfToken() in C:\xampp\htdocs\new\admin\player_search.php:328
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\new\admin\player_search.php on line 328
+[16-Mar-2025 00:42:33 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:33 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:33 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:33 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:33 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:33 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:33 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function generateCsrfToken() in C:\xampp\htdocs\new\admin\player_search.php:328
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\new\admin\player_search.php on line 328
+[16-Mar-2025 00:42:34 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:34 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:34 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:34 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:34 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:34 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:34 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:34 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function generateCsrfToken() in C:\xampp\htdocs\new\admin\player_search.php:328
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\new\admin\player_search.php on line 328
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT COUNT(*) as count FROM players with params: Array
+(
+)
+
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT COUNT(*) as count FROM website_users with params: Array
+(
+)
+
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT COUNT(*) as count FROM website_users WHERE role != 'user' with params: Array
+(
+)
+
+[16-Mar-2025 00:42:35 UTC] Executing query: 
+            SELECT last_login
+            FROM website_users
+            WHERE role != 'user' AND last_login IS NOT NULL
+            ORDER BY last_login DESC
+            LIMIT 1
+         with params: Array
+(
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT COUNT(*) as count FROM admin_notifications WHERE user_id = ? AND is_read = 0 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SHOW TABLES LIKE 'pending_changes' with params: Array
+(
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:35 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:35 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT COUNT(*) as count FROM players with params: Array
+(
+)
+
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT COUNT(*) as count FROM website_users with params: Array
+(
+)
+
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT COUNT(*) as count FROM website_users WHERE role != 'user' with params: Array
+(
+)
+
+[16-Mar-2025 00:42:38 UTC] Executing query: 
+            SELECT last_login
+            FROM website_users
+            WHERE role != 'user' AND last_login IS NOT NULL
+            ORDER BY last_login DESC
+            LIMIT 1
+         with params: Array
+(
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT COUNT(*) as count FROM pending_changes WHERE status = ? with params: Array
+(
+    [0] => pending
+)
+
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT COUNT(*) as count FROM admin_notifications WHERE user_id = ? AND is_read = 0 with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT setting_value FROM website_settings WHERE setting_key = ? with params: Array
+(
+    [0] => site_name
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SHOW TABLES LIKE 'pending_changes' with params: Array
+(
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:38 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:38 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:42 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:42 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:42 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:42 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:42 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:42 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:58 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:58 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:58 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => player_search
+    [2] => Searched for players with all: Bagha
+    [3] => ::1
+    [4] => 2025-03-16 00:42:58
+)
+
+[16-Mar-2025 00:42:58 UTC] Bound parameters with types: issss
+[16-Mar-2025 00:42:58 UTC] Insert successful. Last ID: 14
+[16-Mar-2025 00:42:58 UTC] Error searching players: Unknown column 'steam' in 'where clause'
+[16-Mar-2025 00:42:58 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:58 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:42:58 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:42:58 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:43:06 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:06 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:06 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => player_search
+    [2] => Searched for players with all: Bagha Jatin
+    [3] => ::1
+    [4] => 2025-03-16 00:43:06
+)
+
+[16-Mar-2025 00:43:06 UTC] Bound parameters with types: issss
+[16-Mar-2025 00:43:06 UTC] Insert successful. Last ID: 15
+[16-Mar-2025 00:43:06 UTC] Error searching players: Unknown column 'steam' in 'where clause'
+[16-Mar-2025 00:43:06 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:06 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:43:06 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:06 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:43:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:41 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => player_search
+    [2] => Searched for players with all: IC120647
+    [3] => ::1
+    [4] => 2025-03-16 00:43:41
+)
+
+[16-Mar-2025 00:43:41 UTC] Bound parameters with types: issss
+[16-Mar-2025 00:43:41 UTC] Insert successful. Last ID: 16
+[16-Mar-2025 00:43:41 UTC] Error searching players: Unknown column 'steam' in 'where clause'
+[16-Mar-2025 00:43:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:41 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:43:41 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:41 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:43:45 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:45 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:45 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => player_search
+    [2] => Searched for players with citizenid: IC120647
+    [3] => ::1
+    [4] => 2025-03-16 00:43:45
+)
+
+[16-Mar-2025 00:43:45 UTC] Bound parameters with types: issss
+[16-Mar-2025 00:43:45 UTC] Insert successful. Last ID: 17
+[16-Mar-2025 00:43:45 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:45 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:43:45 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:43:45 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:44:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:03 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => player_search
+    [2] => Searched for players with name: John Singh
+    [3] => ::1
+    [4] => 2025-03-16 00:44:03
+)
+
+[16-Mar-2025 00:44:03 UTC] Bound parameters with types: issss
+[16-Mar-2025 00:44:03 UTC] Insert successful. Last ID: 18
+[16-Mar-2025 00:44:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:03 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:44:03 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:03 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:44:08 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:08 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:08 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => player_search
+    [2] => Searched for players with name: John
+    [3] => ::1
+    [4] => 2025-03-16 00:44:08
+)
+
+[16-Mar-2025 00:44:08 UTC] Bound parameters with types: issss
+[16-Mar-2025 00:44:08 UTC] Insert successful. Last ID: 19
+[16-Mar-2025 00:44:08 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:08 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:44:08 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:08 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:44:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:20 UTC] Executing insert query: INSERT INTO action_logs (user_id, action_type, action, ip_address, timestamp) VALUES (?, ?, ?, ?, ?) with data: Array
+(
+    [0] => 3
+    [1] => view_player_details
+    [2] => Viewed details for player with citizenid: A3H548JH
+    [3] => ::1
+    [4] => 2025-03-16 00:44:20
+)
+
+[16-Mar-2025 00:44:20 UTC] Bound parameters with types: issss
+[16-Mar-2025 00:44:20 UTC] Insert successful. Last ID: 20
+[16-Mar-2025 00:44:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:20 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
+[16-Mar-2025 00:44:20 UTC] Database connection established successfully to fivem_panel
+[16-Mar-2025 00:44:20 UTC] Executing query: SELECT role FROM website_users WHERE id = ? with params: Array
+(
+    [0] => 3
+)
+
