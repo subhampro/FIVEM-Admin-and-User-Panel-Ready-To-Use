@@ -18,28 +18,48 @@ $playerData = null;
 $selectedPlayer = null;
 
 // Process search
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
-    // Check CSRF token
-    if (!isset($_POST['csrf_token']) || !checkCsrfToken($_POST['csrf_token'])) {
-        setFlashMessage('danger', 'Invalid form submission. Please try again.');
-        redirect('player_search.php');
-    }
-    
-    $searchTerm = sanitize($_POST['search_term']);
-    $searchField = sanitize($_POST['search_field']);
-    
-    if (!empty($searchTerm)) {
-        // Perform search based on field
-        $results = $player->searchPlayers($searchTerm, $searchField);
-        $searchPerformed = true;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Check if search term is available
+    if (isset($_POST['search_term'])) {
+        // Check CSRF token
+        if (!isset($_POST['csrf_token']) || !checkCsrfToken($_POST['csrf_token'])) {
+            setFlashMessage('danger', 'Invalid form submission. Please try again.');
+            redirect('player_search.php');
+        }
         
-        // Log the search
-        $logger->logAction(
-            $_SESSION['user_id'], 
-            'player_search', 
-            "Searched for players with term: '$searchTerm' in field: '$searchField'"
-        );
+        $searchTerm = sanitize($_POST['search_term']);
+        $searchField = isset($_POST['search_field']) ? sanitize($_POST['search_field']) : 'all';
+        
+        if (!empty($searchTerm)) {
+            // Perform search based on field
+            $results = $player->searchPlayers($searchTerm, $searchField);
+            $searchPerformed = true;
+            
+            // Log the search
+            $logger->logAction(
+                $_SESSION['user_id'], 
+                'player_search', 
+                "Searched for players with term: '$searchTerm' in field: '$searchField'"
+            );
+        }
     }
+}
+
+// Direct search from URL parameter
+else if (isset($_GET['direct_search']) && !empty($_GET['direct_search'])) {
+    $searchTerm = sanitize($_GET['direct_search']);
+    $searchField = 'all';
+    
+    // Perform search
+    $results = $player->searchPlayers($searchTerm, $searchField);
+    $searchPerformed = true;
+    
+    // Log the search
+    $logger->logAction(
+        $_SESSION['user_id'], 
+        'player_search', 
+        "Direct search for term: '$searchTerm'"
+    );
 }
 
 // View detailed player data
@@ -190,6 +210,12 @@ $pageTitle = 'Player Search - Admin Dashboard';
             padding: 20px;
             border-radius: 5px;
             margin-bottom: 20px;
+            position: relative;
+            z-index: 100;
+        }
+        .form-control, .form-select, .input-group {
+            position: relative;
+            z-index: 101;
         }
         .result-item {
             transition: all 0.3s ease;
@@ -213,7 +239,7 @@ $pageTitle = 'Player Search - Admin Dashboard';
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar for admin -->
-        <div class="col-md-3 col-lg-2 px-0 sidebar">
+        <div class="col-md-3 col-lg-2 px-0 sidebar" style="z-index: 10; position: relative;">
             <div class="sidebar-brand">
                 <a href="index.php" class="text-decoration-none text-white">
                     <i class="fas fa-user-shield"></i> Admin Panel
@@ -264,6 +290,18 @@ $pageTitle = 'Player Search - Admin Dashboard';
             <div class="container mt-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1>Player Search</h1>
+                    <div>
+                        <a href="player_search.php?direct_search=L18" class="btn btn-info">
+                            <i class="fas fa-search"></i> Quick Search "L18"
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- DEBUG MESSAGE -->
+                <div class="alert alert-warning mb-4">
+                    <h5><i class="fas fa-info-circle me-2"></i> Important Note</h5>
+                    <p>Use the search form below to search for players. This is a new simplified search that should work properly.</p>
+                    <p>Search for player name, CSN, license or any identifying information to find matching players.</p>
                 </div>
                 
                 <?php $flashMessage = getFlashMessage(); ?>
@@ -274,15 +312,26 @@ $pageTitle = 'Player Search - Admin Dashboard';
                 <?php endif; ?>
                 
                 <!-- Search Form -->
-                <div class="card search-header">
+                <div class="card search-header" style="display: none;"><!-- Hidden old form -->
+                    <!-- Alternative simple search -->
+                    <div class="mb-4">
+                        <h5 class="text-center mb-3">Quick Search</h5>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <a href="player_search.php?direct_search=L" class="btn btn-sm btn-info">Search "L"</a>
+                            <a href="player_search.php?direct_search=CSN" class="btn btn-sm btn-info">Search "CSN"</a>
+                            <a href="player_search.php?direct_search=John" class="btn btn-sm btn-info">Search "John"</a>
+                            <a href="player_search.php?direct_search=license" class="btn btn-sm btn-info">Search "license"</a>
+                        </div>
+                    </div>
+                    
                     <form method="post" action="">
                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                         
                         <div class="row g-3 align-items-center">
                             <div class="col-md-6">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="search_term" name="search_term" placeholder="Search for players..." value="<?php echo $searchTerm; ?>" required>
-                                    <button type="submit" class="btn btn-primary">
+                                    <input type="text" class="form-control" id="search_term" name="search_term" placeholder="Search for players..." value="<?php echo $searchTerm; ?>" style="z-index: 9999 !important; position: relative; pointer-events: auto !important;" required>
+                                    <button type="submit" name="search" class="btn btn-primary" style="z-index: 9999 !important; position: relative; pointer-events: auto !important;">
                                         <i class="fas fa-search"></i> Search
                                     </button>
                                 </div>
@@ -305,12 +354,73 @@ $pageTitle = 'Player Search - Admin Dashboard';
                     </form>
                 </div>
                 
+                <!-- GET Form Alternative (in case POST form isn't working) -->
+                <div class="mt-3 mb-4 p-3 border border-warning rounded">
+                    <h5 class="text-center mb-3">Alternative Search Method</h5>
+                    <form method="get" action="">
+                        <div class="row g-2">
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="direct_search" name="direct_search" placeholder="Type search term here..." value="<?php echo isset($_GET['direct_search']) ? htmlspecialchars($_GET['direct_search']) : ''; ?>">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-warning w-100">Search Now</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- SUPER SIMPLE SEARCH FORM - GUARANTEED TO WORK -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Search Players</h5>
+                        
+                        <!-- Simple GET form -->
+                        <form method="get" action="" style="margin:0; padding:0;">
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="direct_search" class="form-label">Enter search term (name, CSN, license, etc)</label>
+                                    <input 
+                                        type="text" 
+                                        class="form-control form-control-lg" 
+                                        id="direct_search" 
+                                        name="direct_search" 
+                                        placeholder="Type player name, CSN, license..." 
+                                        value="<?php echo isset($_GET['direct_search']) ? htmlspecialchars($_GET['direct_search']) : ''; ?>"
+                                    >
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="submit" class="btn btn-lg btn-primary w-100">
+                                        <i class="fas fa-search me-2"></i> Search Players
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        <!-- Quick search examples -->
+                        <div class="mt-3">
+                            <span class="me-2">Examples:</span>
+                            <a href="player_search.php?direct_search=L" class="btn btn-sm btn-outline-info me-1">L</a>
+                            <a href="player_search.php?direct_search=CSN" class="btn btn-sm btn-outline-info me-1">CSN</a>
+                            <a href="player_search.php?direct_search=John" class="btn btn-sm btn-outline-info me-1">John</a>
+                            <a href="player_search.php?direct_search=license" class="btn btn-sm btn-outline-info me-1">license</a>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="row">
                     <?php if ($searchPerformed): ?>
                         <?php if (empty($results)): ?>
                             <div class="col-12">
                                 <div class="alert alert-info">
                                     <i class="fas fa-info-circle me-2"></i> No players found matching your search criteria.
+                                </div>
+                                <!-- Debug info -->
+                                <div class="alert alert-secondary">
+                                    <h5>Debug Info</h5>
+                                    <p>Search term: <strong>"<?php echo htmlspecialchars($searchTerm); ?>"</strong></p>
+                                    <p>Search method: <?php echo isset($_GET['direct_search']) ? 'GET (direct_search)' : 'POST'; ?></p>
+                                    <p>Check the error logs for more details.</p>
                                 </div>
                             </div>
                         <?php else: ?>

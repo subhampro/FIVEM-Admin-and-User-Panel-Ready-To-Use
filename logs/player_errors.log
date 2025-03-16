@@ -1,0 +1,9 @@
+[2025-03-16 00:33:08] Search attempt with term: 'L18', field: 'all'
+[2025-03-16 00:33:08] Search query: SELECT * FROM players WHERE citizenid LIKE ? OR charinfo LIKE ? OR license LIKE ? LIMIT 50 with param: %L18%
+[2025-03-16 00:33:08] Search found 3 results
+[2025-03-16 00:33:22] Search attempt with term: 'L18', field: 'all'
+[2025-03-16 00:33:22] Search query: SELECT * FROM players WHERE citizenid LIKE ? OR charinfo LIKE ? OR license LIKE ? LIMIT 50 with param: %L18%
+[2025-03-16 00:33:22] Search found 3 results
+[2025-03-16 00:33:23] Search attempt with term: 'L18', field: 'all'
+[2025-03-16 00:33:23] Search query: SELECT * FROM players WHERE citizenid LIKE ? OR charinfo LIKE ? OR license LIKE ? LIMIT 50 with param: %L18%
+[2025-03-16 00:33:23] Search found 3 results

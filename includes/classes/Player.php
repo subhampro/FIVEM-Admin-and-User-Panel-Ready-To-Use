@@ -94,6 +94,9 @@ class Player {
      * @return array Array of matching player records
      */
     public function searchPlayers($searchTerm, $searchField = 'all') {
+        // Log search attempt
+        $this->logError("Search attempt with term: '$searchTerm', field: '$searchField'");
+        
         $gameDb = $this->getGameDb();
         if (!$gameDb) {
             $this->logError("Failed to get game database connection in searchPlayers()");
@@ -102,48 +105,17 @@ class Player {
         
         $searchTerm = trim($searchTerm);
         if (empty($searchTerm)) {
+            $this->logError("Empty search term provided");
             return [];
         }
         
         try {
-            $query = "SELECT * FROM players WHERE ";
-            $params = [];
+            // Simple query for better reliability
+            $query = "SELECT * FROM players WHERE citizenid LIKE ? OR charinfo LIKE ? OR license LIKE ? LIMIT 50";
+            $likeParam = "%$searchTerm%";
             
-            // Build the search condition based on field
-            switch ($searchField) {
-                case 'citizenid':
-                    $query .= "citizenid LIKE ?";
-                    $params[] = "%$searchTerm%";
-                    break;
-                
-                case 'name':
-                    $query .= "(charinfo LIKE ? OR name LIKE ?)";
-                    $params[] = "%\"firstname\":\"%" . $searchTerm . "%\"%";
-                    $params[] = "%$searchTerm%";
-                    break;
-                
-                case 'license':
-                    $query .= "license LIKE ?";
-                    $params[] = "%$searchTerm%";
-                    break;
-                
-                case 'phone':
-                    $query .= "charinfo LIKE ?";
-                    $params[] = "%\"phone\":\"%" . $searchTerm . "%\"%";
-                    break;
-                
-                case 'all':
-                default:
-                    $query .= "(citizenid LIKE ? OR name LIKE ? OR license LIKE ? OR charinfo LIKE ?)";
-                    $params[] = "%$searchTerm%";
-                    $params[] = "%$searchTerm%";
-                    $params[] = "%$searchTerm%";
-                    $params[] = "%$searchTerm%";
-                    break;
-            }
-            
-            // Limit to 50 results for performance
-            $query .= " LIMIT 50";
+            // Log the query
+            $this->logError("Search query: $query with param: $likeParam");
             
             // Prepare and execute query
             $stmt = $gameDb->prepare($query);
@@ -152,14 +124,11 @@ class Player {
                 return [];
             }
             
-            if (!empty($params)) {
-                $types = str_repeat('s', count($params));
-                $stmt->bind_param($types, ...$params);
-            }
-            
+            // Bind parameters
+            $stmt->bind_param('sss', $likeParam, $likeParam, $likeParam);
             $stmt->execute();
-            $result = $stmt->get_result();
             
+            $result = $stmt->get_result();
             if (!$result) {
                 $this->logError("Failed to get result from player search: " . $stmt->error);
                 return [];
@@ -170,7 +139,9 @@ class Player {
                 $players[] = $row;
             }
             
+            $this->logError("Search found " . count($players) . " results");
             return $players;
+            
         } catch (Exception $e) {
             $this->logError("Exception in searchPlayers(): " . $e->getMessage());
             return [];
