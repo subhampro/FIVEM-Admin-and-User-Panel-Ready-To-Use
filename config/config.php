@@ -1,13 +1,13 @@
 <?php
 // Database connection configuration
 define('DB_HOST', '103.49.70.39');
-define('DB_USER', 'erp');
-define('DB_PASSWORD', 'ddoserrandihain');
-define('DB_NAME', 'elapsed2_0');
+define('DB_USER', 'elapsed');
+define('DB_PASSWORD', 'ddosers sahi main randi hain bhai !!');
+define('DB_NAME', 'elapsed');
 define('DB_CHARSET', 'utf8mb4');
 
 // Game database configuration
-define('GAME_DB_NAME', 'elapsed2_0'); // Database name for the game server
+define('GAME_DB_NAME', 'elapsed'); // Database name for the game server
 
 // Website configuration
 define('SITE_URL', 'http://localhost');  // Change to your actual domain in production
